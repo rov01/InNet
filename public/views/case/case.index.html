@@ -1,0 +1,100 @@
+<div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-lg-10">
+        <h2>案件登錄與安全管制</h2>
+    </div>
+    <div class="col-lg-2">
+    </div>
+</div>
+<div class="wrapper wrapper-content">
+	<div class="col-md-5">
+		<div class="panel panel-default inbox">
+			<div class="panel-body">
+				<div class="search-form">
+					<div class="row">
+						<div class="col-xs-9">
+							<div class="form-group">
+								<input type="text" class="form-control" placeholder="搜尋案件">
+							</div>
+						</div>
+						<div class="col-xs-3">
+							<div class="btn btn-primary btn-block" ng-click="addNewCase()">
+								<i class="fa fa-plus"></i>
+								<span>新增</span>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="list-group">
+			  <a class="list-group-item" ng-repeat="case in cases" ng-click="choose($index)">
+			    <div class="row">
+			      <div class="col-sm-6">
+			        <i class="fa fa-3x fa-building-o pull-left"></i>
+			        <h4 class="list-group-item-text">案件類型 : {{case.type}}</h4>
+			        <p class="list-group-item-text">聯絡電話 : {{case.phone}}</p>
+			      </div>
+			      <div class="col-sm-6">
+			        <p class="list-group-item-text">案件編號 : {{case.case_id}}</p>
+			        <p class="list-group-item-text">出勤分隊數  : {{case.branches.length}}</p>
+			      </div>
+			    </div>
+			  </a>
+			</div>
+			<div class="panel-footer">
+				<pagination total-items="bigTotalItems" ng-model="bigCurrentPage" max-size="maxSize" class="pagination-sm" boundary-links="true" rotate="false" num-pages="numPages"></pagination>
+			</div>
+		</div>
+	</div>
+	<div class="col-md-7" ng-if="caseDetails">
+		<div class="panel panel-default" >
+			<div class="panel-heading clearfix">
+				<h2 class="panel-title pull-left">
+					案件編號 : {{caseDetails.case_id}} 案發時間 : {{caseDetails.date}}
+				</h2>
+				<div class="btn btn-group pull-right">
+					<div class="btn btn-primary pull-right" ng-click="editCase(caseDetails.case_id)">
+						<i class="fa fa-pencil"></i>
+						<span>案件編輯</span>
+					</div>
+				</div>
+			</div>
+			<div class="list-group">
+				<div class="list-group-item">
+					<p class="list-group-item-text">受理人員</p>
+					<h4 class="list-group-item-text">{{caseDetails.officerReceiver}}</h4>
+				</div>
+				<div class="list-group-item">
+					<p class="list-group-item-text">案件地址</p>
+					<h4 class="list-group-item-text">{{caseDetails.address}} </h4>
+				</div>	
+				<div class="list-group-item">
+					<p class="list-group-item-text">報案人電話</p>
+					<h4 class="list-group-item-text">{{caseDetails.phone}} </h4>
+				</div>
+			</div>
+			<div class="panel-footer">
+				<a class="btn btn-success btn-block" href='#/dutyDesk/case/{{caseDetails._id}}' ng-if="caseDetails.isOngoing"> 安全管控 </a>
+            	<h4 ng-if="!caseDetails.isOngoing">已結案</h4>
+			</div>
+		</div>
+		<div class="panel panel-default">
+			<div class="panel-heading clearfix">
+				<h2 class="panel-title pull-left">
+					派遣分隊
+				</h2>
+			</div>
+			<div class="list-group">
+				<div class="list-group-item" ng-if="caseDetails.branches.length == 0">
+						<p class="list-group-item-text">無派遣車輛</p>
+				</div>
+				<div class="list-group-item" ng-repeat="branch in caseDetails.branches">
+					<h4 class="list-group-item-heading">{{branch}}</h4>
+					<p class="list-group-item-text" ng-repeat="car in caseDetails.cars"  ng-if="car.branch == branch">{{car.radioCode}}</p>
+				</div>
+			</div>
+			<div class="panel-footer">
+			</div>
+		</div>
+	</div>
+</div>
+

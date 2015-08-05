@@ -1,0 +1,46 @@
+<div class="inmodal">
+    <div class="modal-header">
+    	<div class="btn btn-group pull-left">
+    		<button class="btn btn-danger" ng-click="cancel()">取消</button>
+    	</div>
+    	<div class="btn btn-group pull-right">
+    		<button class="btn btn-primary" ng-click="save()" ng-if="isNew">存擋</button>
+    	</div>
+        <div class="btn btn-group pull-right">
+            <button class="btn btn-primary" ng-click="update()" ng-if="!isNew">更新</button>
+        </div>
+         <h4 class="modal-title">{{member.branch}} {{member.name}}</h4>
+    </div>
+    <div class="modal-body">
+    	 <form class="form-horizontal">
+            <div class="form-group">
+            	<label class="col-md-2 control-label">姓名</label>
+                <div class="col-md-10">
+                	<input placeholder="姓名" class="form-control" ng-model="member.name"> 
+                	<span class="help-block m-b-none"></span>
+                </div>
+            </div>
+            <div class="form-group">
+            	<label class="col-md-2 control-label">職等</label>
+                <div class="col-md-10">
+                   <select class="form-control m-b" ng-model='member.title', ng-options='title for title in member.titles'></select>
+                </div>
+            </div>
+            <div class="form-group">
+            	<label class="col-md-2 control-label">大隊</label>
+				<div class="col-md-10">
+					<select class="form-control m-b" ng-model='member.corp', ng-options='corp for corp in member.corps'></select>
+				</div>
+            </div>
+             <div class="form-group" ng-if="!isNew">
+                <label class="col-md-2 control-label">分隊</label>
+                <div class="col-md-10">
+                    <select class="form-control m-b" ng-model='member.branch', ng-options='branch for branch in member.branches'></select>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        
+    </div>
+</div>

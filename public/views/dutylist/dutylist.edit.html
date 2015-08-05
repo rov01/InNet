@@ -1,0 +1,67 @@
+<div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-lg-10">
+        <h2>派遣人員登錄</h2>
+        <ol class="breadcrumb">
+            <li>
+                <a href="index.html">Home</a>
+            </li>
+            <li>
+                <a>Layout</a>
+            </li>
+            <li class="active">
+                <strong>Duty List</strong>
+            </li>
+        </ol>
+    </div>
+    <div class="col-lg-2">
+    </div>
+</div>
+<div class="wrapper wrapper-content">
+    <div class="panel ui-tab">
+        <div class="panel-heading">
+            <div class="row">
+                <div class="col-lg-8">
+                    <div class="panel-title">
+                        <h2>{{branch.name}} 總人數: {{branch.members.length}} </h2>
+                        <select class="form-control m-b" ng-model='branch.director', ng-options='director for director in branch.directors'></select>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <a class="btn btn-success btn-block" ng-click="save()">
+                        <span>存擋</span>
+                    </a>
+                </div>
+            </div>
+          
+        </div>
+        <div class="panel-body">
+            <div class="list-group">
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th>姓名</th>
+                                <th>職稱</th>
+                                <th>任務</th>
+                                <th>狀態</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="member in branch.members track by $index">
+                                <td>{{$index + 1 }}</td>
+                                <td>{{::member.name}}</td>
+                                <td>{{::member.title}}</td>
+                                <td><select class="form-control m-b" ng-model='member.mission', ng-options='mission for mission in member.missions'></select></td>
+                                <td>
+                                    <div class="btn btn-primary" ng-if="member.onDuty" ng-click="check(member)">在隊</div>
+                                    <div class="btn btn-warning" ng-if="!member.onDuty" ng-click="check(member)">不在隊</div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div> 
+        </div>
+    </div>
+</div>
