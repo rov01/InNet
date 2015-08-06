@@ -27,5 +27,7 @@ angular.module('InNet')
 	        SocketSvc.removeAllListeners();
 	    })
 
+	    $scope.accessLevel = UserSvc.accessLevel();
+
 		
 }])

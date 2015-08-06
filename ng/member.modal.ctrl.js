@@ -9,7 +9,7 @@ angular.module('InNet')
 
 	$scope.isNew = _.isEmpty(member);
 	
-	BranchSvc.fetch()
+	BranchSvc.fetch(UserSvc.userCorps())
 	.success(function(branches){
 		$scope.branches = branches 
 	})

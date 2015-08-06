@@ -6,8 +6,8 @@
 angular.module('InNet')
 .service('BranchSvc', [ '$http', function ($http) {
 
-	this.fetch = function(){
-		return $http.get('/api/branch');
+	this.fetch = function(corps){
+		return $http.get('/api/branch?corps=' + corps);
 	};
 
 	this.fetchByName = function(branch){

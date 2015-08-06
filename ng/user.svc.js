@@ -24,7 +24,7 @@ angular.module('InNet')
 
 	this.isValid = function( branch ){
 		if (this.isLoggedIn) {
-			if (jwtHelper.decodeToken(store.get('jwt')).branch == "第三救災救護大隊" || jwtHelper.decodeToken(store.get('jwt')).branch == branch) {
+			if (jwtHelper.decodeToken(store.get('jwt')).accessLevel > 1   || jwtHelper.decodeToken(store.get('jwt')).branch == branch) {
 				return true; 
 			}else {
 				return false;
@@ -37,6 +37,12 @@ angular.module('InNet')
 	this.userBranch = function(){
 		if (this.isLoggedIn) {
 			return jwtHelper.decodeToken(store.get('jwt')).branch;
+		};
+	};
+
+	this.userCorps = function(){
+		if (this.isLoggedIn) {
+			return jwtHelper.decodeToken(store.get('jwt')).corps;
 		};
 	};
 

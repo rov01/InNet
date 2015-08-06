@@ -4,15 +4,19 @@
 * Description
 */
 angular.module('InNet')
-.controller('DutyListCtrl', ['$scope', 'BranchSvc', '$stateParams', 'SocketSvc', 'UserSvc',
-	function ($scope, BranchSvc, $stateParams, SocketSvc, UserSvc) {
+.controller('DutyListCtrl', ['$scope', 'BranchSvc', '$stateParams', 'SocketSvc', 'UserSvc', '$q',
+	function ($scope, BranchSvc, $stateParams, SocketSvc, UserSvc, $q) {
+
+
 
 		if (UserSvc.accessLevel() < 2 ) {
 			var branch = UserSvc.userBranch();
 		} else{
 			var branch = $stateParams.branch
 		};
+
 		
+
 		BranchSvc.totalListFindByName(branch).success(function(branch){
 			console.log(branch);
 			$scope.branch = branch;

@@ -34,7 +34,7 @@
 			        <p class="list-group-item-text">聯絡電話 : {{case.phone}}</p>
 			      </div>
 			      <div class="col-sm-6">
-			        <p class="list-group-item-text">案件編號 : {{case.case_id}}</p>
+			        <p class="list-group-item-text">案件編號 : {{case.caseId}}</p>
 			        <p class="list-group-item-text">出勤分隊數  : {{case.branches.length}}</p>
 			      </div>
 			    </div>
@@ -49,10 +49,10 @@
 		<div class="panel panel-default" >
 			<div class="panel-heading clearfix">
 				<h2 class="panel-title pull-left">
-					案件編號 : {{caseDetails.case_id}} 案發時間 : {{caseDetails.date}}
+					案件編號 : {{caseDetails.caseId}} 案發時間 : {{caseDetails.date}}
 				</h2>
 				<div class="btn btn-group pull-right">
-					<div class="btn btn-primary pull-right" ng-click="editCase(caseDetails.case_id)">
+					<div class="btn btn-primary pull-right" ng-click="editCase(caseDetails.caseId)">
 						<i class="fa fa-pencil"></i>
 						<span>案件編輯</span>
 					</div>

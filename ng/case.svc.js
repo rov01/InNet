@@ -6,8 +6,8 @@
 angular.module('InNet')
 .service('CaseSvc', ['$http',function ($http) {
 
-	this.fetch = function(){
-		return $http.get('/api/cases');
+	this.fetch = function(corps){
+		return $http.get('/api/cases?corps=' + corps );
 	};
 
 	this.fetchAll = function(){
@@ -18,12 +18,12 @@ angular.module('InNet')
 		return $http.get('/api/cases/branch?branch=' + branch )
 	}
 
-	this.fetchDetails = function( case_id){
-		return $http.get('/api/cases/details/' + case_id);
+	this.fetchDetails = function( caseId){
+		return $http.get('/api/cases/details/' + caseId);
 	};
 
-	this.findById = function( case_id ){
-		return $http.get('/api/cases/' + case_id );
+	this.findById = function( caseId ){
+		return $http.get('/api/cases/' + caseId );
 	};
 
 	this.create = function(case_info){
@@ -34,8 +34,8 @@ angular.module('InNet')
 		return $http.put('/api/cases/' + updated_case.id , updated_case);
 	};
 
-	this.delete = function(case_id){
-		return $http.post('/api/cases/' + case_id);
+	this.delete = function(caseId){
+		return $http.post('/api/cases/' + caseId);
 	};
 
 	this.closeCase = function(data){

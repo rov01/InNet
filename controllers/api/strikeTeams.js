@@ -52,9 +52,9 @@ router.post('/',function(req,res){
 				if (err) {
 					return err
 				} else{
-					console.log(st);
+					// console.log(st);
 					res.json({msg : "Strike Team created"});
-					socketios.broadcast('newSt',st);
+					// socketios.broadcast('newSt',st);
 				};
 		})
 	});

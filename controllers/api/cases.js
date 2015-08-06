@@ -36,7 +36,7 @@ router.use(function(req,res, next){
 
 router.post('/',function(req,res){
 	var newCase = new Case({
-		case_id 		: req.body.case_id,
+		caseId 			: req.body.caseId,
 		address 		: req.body.address,
 		officerReceiver : req.body.officerReceiver, 
 		type    		: req.body.type,
@@ -44,7 +44,8 @@ router.post('/',function(req,res){
 		branches 		: req.body.branches,
 		branchIds		: req.body.branchIds,
 		cars 			: req.body.cars,
-		isOngoing 		: req.body.isOngoing
+		isOngoing 		: req.body.isOngoing,
+		corps 			: req.body.corps
 	});
 
 	newCase.save(function(err, newCase){
@@ -66,7 +67,9 @@ router.post('/',function(req,res){
 })
 
 router.get('/',function(req,res){
-	Case.find({})
+	Case.find({
+		corps : req.query.corps 
+	})
 	.sort({ date : -1 })
 	.limit(10)
 	.exec(function(err, old_case){
@@ -165,7 +168,7 @@ router.put('/:caseId',function(req,res){
 	},
 	{ 
 		$set : {
-			case_id 		: req.body.case_id,
+			caseId 		: req.body.caseId,
 			address 		: req.body.address,
 			officerReceiver : req.body.officerReceiver, 
 			type    		: req.body.type,
@@ -179,7 +182,7 @@ router.put('/:caseId',function(req,res){
 	function(err){
 		if (err) {return err};
 		socketios.broadcast('caseModified',{ 
-		  	case_id 		: req.body.case_id,
+		  	caseId 		: req.body.caseId,
 			address 		: req.body.address,
 			officerReceiver : req.body.officerReceiver, 
 			type    		: req.body.type,

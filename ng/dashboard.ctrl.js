@@ -7,7 +7,7 @@ angular.module('InNet')
 .controller('DashboardCtrl', ['$scope', '$location', 'SocketSvc', 'UserSvc', 'BranchSvc',
 	function ($scope, $location, SocketSvc, UserSvc, BranchSvc) {
 
-		BranchSvc.fetch().success(function(branches){
+		BranchSvc.fetch(UserSvc.userCorps()).success(function(branches){
 			$scope.branches = branches;
 		});
 

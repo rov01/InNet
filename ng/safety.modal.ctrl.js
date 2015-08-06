@@ -72,7 +72,8 @@ angular.module('InNet')
 	    			})		
 		    	};
 
-		      	StSvc.create(strikeTeam)
+		      	// StSvc.create(strikeTeam)
+		      	SocketSvc.emit("createStrikeTeam", strikeTeam)
 		      	$modalInstance.close();
 	    	}else{
 	    		$window.alert("you must organize strike team")

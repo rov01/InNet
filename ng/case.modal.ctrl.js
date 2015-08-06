@@ -16,7 +16,7 @@ angular.module('InNet')
 		var carObjs = caseDetails.cars;
 	}
 
-	BranchSvc.fetch().success(function(branches){
+	BranchSvc.fetch(UserSvc.userCorps()).success(function(branches){
 	    $scope.branches = branches;
 	});
 
@@ -113,7 +113,7 @@ angular.module('InNet')
 
 	$scope.save = function(){
 		CaseSvc.create({
-			case_id   : caseId + 1, 
+			caseId   : caseId + 1, 
 			address   : $scope.caseObj.address || "測試",
 			officerReceiver : UserSvc.currentUser() ||  "劉曉曼",
 			type      : $scope.caseObj.type || "救護",
@@ -121,7 +121,8 @@ angular.module('InNet')
 			branches  : _.unique($scope.caseObj.branches),
 			branchIds : getBranchId($scope.caseObj.branches),
 	  		cars      : $scope.caseObj.carIds,
-			isOngoing : true, 
+			isOngoing : true,
+			corps 	  : UserSvc.userCorps()
 		}).success(function(newCase){
 			$modalInstance.close(newCase)
 		});
@@ -130,7 +131,7 @@ angular.module('InNet')
 	$scope.update = function(){
 		var content = {
 			id : caseDetails._id,
-			case_id   : caseId, 
+			caseId   : caseId, 
 			address   : $scope.caseObj.address,
 			officerReceiver : UserSvc.currentUser() || "劉曉曼",
 			type      : $scope.caseObj.type,

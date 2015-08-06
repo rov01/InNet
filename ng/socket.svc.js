@@ -14,7 +14,7 @@ angular.module('InNet')
     } else {
       authToken = store.get('jwt')
     };
-    return io.connect('https://104.236.201.50:3000',{ query : 'token=' + authToken , 'forceNew':true });
+    return io.connect('http://localhost:3000',{ query : 'token=' + authToken , 'forceNew':true });
   }
 
   var socket = this.init();

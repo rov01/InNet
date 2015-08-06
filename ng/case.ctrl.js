@@ -4,14 +4,14 @@
 * Description
 */
 angular.module('InNet')
-.controller('CaseCtrl', ['$scope','$stateParams','$modal','CaseSvc', '$log', 'SocketSvc',
-	function ($scope , $stateParams, $modal, CaseSvc, $log, SocketSvc) {
+.controller('CaseCtrl', ['$scope','$stateParams','$modal','CaseSvc', '$log', 'SocketSvc', 'UserSvc',
+	function ($scope , $stateParams, $modal, CaseSvc, $log, SocketSvc, UserSvc) {
 
 	$scope.maxSize = 5;
 	$scope.bigTotalItems = 175;
 	$scope.bigCurrentPage = 1;
 
-	CaseSvc.fetch().success(function(cases){
+	CaseSvc.fetch(UserSvc.userCorps()).success(function(cases){
 		$scope.cases = cases;
 	});
 
@@ -20,7 +20,7 @@ angular.module('InNet')
 	});
 
 	SocketSvc.on('caseModified',function(_case){
-		$scope.cases[_case.case_id-1] = _case;
+		$scope.cases[_case.caseId-1] = _case;
 	});
 
 	$scope.choose = function(id){
@@ -39,7 +39,7 @@ angular.module('InNet')
 			    		if ( _.isEmpty($scope.cases)) {
 			    			return 0
 			    		} else{
-			    			return $scope.cases[0].case_id;
+			    			return $scope.cases[0].caseId;
 			    		};
 			    },
 		    	caseDetails : function(){

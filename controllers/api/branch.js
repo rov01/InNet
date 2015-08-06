@@ -27,7 +27,9 @@ router.use(function(req,res, next){
 
 
 router.get('/', function(req,res){
- 	Branch.find({})
+ 	Branch.find({ 
+ 		corps : req.query.corps
+ 	})
  	.sort({id : 1})
  	.exec(function(err,branches){
  		if (err) { 
@@ -76,6 +78,7 @@ router.get('/name',function(req,res){
 })
 
 router.get('/name/total',function(req,res){
+	console.log(req.query.branch);
 	Branch.findOne({
 		name : req.query.branch
 	})

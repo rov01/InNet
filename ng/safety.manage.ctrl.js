@@ -56,12 +56,6 @@ angular.module('InNet')
 			    	}
 			    }
 		    });
-
-		    modalInstance.result.then(function (st) {
-		    	
-		    }, function () {
-		      $log.info('Modal dismissed at: ' + new Date());
-		    });
 		};
 
 		$scope.openSettingModal = function(strikeTeam, id){

@@ -4,17 +4,17 @@
 * Description
 */
 angular.module('InNet')
-.controller('DispatchCtrl', ['$scope','$stateParams','$modal','CaseSvc','BranchSvc', 'CarSvc',
-	function ($scope , $stateParams, $modal, CaseSvc, BranchSvc, CarSvc) {
+.controller('DispatchCtrl', ['$scope','$stateParams','$modal','CaseSvc','BranchSvc', 'CarSvc', 'UserSvc',
+	function ($scope , $stateParams, $modal, CaseSvc, BranchSvc, CarSvc, UserSvc) {
 
-	CaseSvc.fetch().success(function(cases){
+	CaseSvc.fetch(UserSvc.userCorps()).success(function(cases){
 		$scope.cases = cases;
 		CaseSvc.findById($scope.cases[$stateParams.caseId]._id).success(function(_case){
 				$scope.caseDetails = _case
 		})
 	})
 
-	BranchSvc.fetch().success(function(branches){
+	BranchSvc.fetch(UserSvc.userCorps()).success(function(branches){
 	    $scope.branchList = branches;
 
 	 })
@@ -29,7 +29,7 @@ angular.module('InNet')
 		    controller: 'CaseAddModalCtrl',
 		    size: "lg",
 		    resolve : {
-		    	case_id : function(){
+		    	caseId : function(){
 		    		return $scope.id = "新增案件"
 		    	},
 		    	branchList : function(){
@@ -54,8 +54,8 @@ angular.module('InNet')
 		    controller: 'CaseAddModalCtrl',
 		    size: "lg",
 		    resolve : {
-		    	case_id : function(){
-		    		return $scope.id = $scope.cases[$stateParams.caseId].case_id 
+		    	caseId : function(){
+		    		return $scope.id = $scope.cases[$stateParams.caseId].caseId 
 		    	},
 		    	branchList : function(){
 		    		return $scope.branchList

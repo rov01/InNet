@@ -120,6 +120,38 @@ exports.connect = function(server){
 				};
 			})
 		})
+
+		socket.on('createStrikeTeam', function(strikeTeam){
+			var newSt = new St({
+				id 				: strikeTeam.id, 
+				caseId 			: strikeTeam.caseId, 
+				branch  		: strikeTeam.branch, 
+				director 		: strikeTeam.director, 
+				position    	: strikeTeam.position, 
+				positions 		: strikeTeam.positions, 
+				mission 		: strikeTeam.mission, 
+				missions		: strikeTeam.missions,
+				area 			: strikeTeam.area,
+				areas 			: strikeTeam.areas, 
+				members 		: strikeTeam.members, 
+				isDismissed		: strikeTeam.isDismissed, 
+				workingTime 	: strikeTeam.workingTime,
+				creator 		: strikeTeam.creator 
+			});
+
+			newSt.save(function(err,st){
+				if (err) {return err};
+				Member.populate(st,
+					{path : "members", match : {onDuty : true }},
+					function(err, st){
+						if (err) {
+							return err
+						} else {
+							io.sockets.emit('newSt', st);
+						};
+				})
+			});
+		})
 	});
 }
 
