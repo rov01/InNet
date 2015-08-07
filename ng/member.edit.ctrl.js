@@ -1,12 +1,19 @@
 angular.module('InNet')
-.controller('MemberEditCtrl', ['$scope', 'MemberSvc', 'BranchSvc', '$stateParams', '$window','$modal',
-	function ($scope, MemberSvc, BranchSvc, $stateParams, $window, $modal) {
+.controller('MemberEditCtrl', ['$scope', 'MemberSvc', 'BranchSvc', '$stateParams', '$window','$modal', '$state',
+	function ($scope, MemberSvc, BranchSvc, $stateParams, $window, $modal, $state) {
 
 		$scope.isDeleted = false;
-		
-		MemberSvc.findByBranch($stateParams.branch).success(function(members){
-			$scope.members = members;
-		});
+
+		var memberInit = function(){
+			MemberSvc.findByBranch($stateParams.branch).success(function(members){
+				$scope.members = members;
+				$scope.members.forEach(function(member){
+					member.workingTime = moment.duration(member.workingTime,'seconds');
+				});
+			});
+		}
+
+		memberInit();
 
 		$scope.save = function(){
 			var memberIds = [];
@@ -39,10 +46,14 @@ angular.module('InNet')
 			    		return $stateParams.branch 
 			    	},
 			    	member : function(){
-			    		return {}
+			    		return { workingTime : 1200 };
 			    	}
 			    }
 		    });
+
+		    modalInstance.result.then(function(member){
+		    	$scope.members.unshift(member);
+		    })
 		}
 
 		$scope.update = function(member){
@@ -55,13 +66,18 @@ angular.module('InNet')
 			    		return $stateParams.branch 
 			    	},
 			    	member : function(){
-			    		return member
+			    		return { workingTime : member.workingTime.minutes() * 60 + member.workingTime.seconds()}
 			    	}
 			    }
 		    });
+
+		    modalInstance.result.then(function(member){
+		    	memberInit();
+		    })
 		}
 
-		$scope.delete = function(){
-			$scope.isDeleted = true; 
+		$scope.delete = function(member){
+			MemberSvc.deleteMember(member);
+			memberInit();
 		};	
 }])

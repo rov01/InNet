@@ -84,11 +84,20 @@ angular.module('InNet')
             templateUrl: "views/member/member.edit.html",
             controller : "MemberEditCtrl",
         })
-        .state('dutyDesk.logistic', {
-            url: "/logistic",
-            templateUrl: "views/logistic/logistic.index.html",
-            controller : "LogisticCtrl",
-        });
+        .state('dutyDesk.car', {
+            abstract : true,
+            template : "<ui-view>"
+        })
+        .state('dutyDesk.car.show',{
+            url: "/car/:branch",
+            templateUrl : "views/cars/car.index.html",
+            controller : "CarIndexCtrl"
+        })
+        .state('dutyDesk.car.edit',{
+            url: "/car/:branch/edit",
+            templateUrl : "views/cars/car.edit.html",
+            controller : "CarEditCtrl"
+        })
     // director 
     $stateProvider
         .state('director',{

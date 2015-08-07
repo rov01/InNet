@@ -25,17 +25,21 @@ router.use(function(req,res, next){
 })
 
 router.post('/',function(req,res){
+
 	var member = new Member({
 		title 			: req.body.title,  
 		id    			: req.body.id,
 		name 			: req.body.name,
-		corp 			: req.body.corp,
+		corps 			: req.body.corps,
 		branch 			: req.body.branch,
-		isChecked		: req.body.isChecked,
-		onDuty			: req.body.onDuty,
 		mission			: req.body.mission,
-		missions		: req.body.missions
+		missions		: req.body.missions,
+		radioCode 		: req.body.radioCode,
+		radioCodePrefix : req.body.radioCodePrefix,
+		workingTime 	: parseInt(req.body.workingTime)
 	});
+
+
 
 	member.save(function(err){
 		if (err) {return err};
@@ -91,11 +95,14 @@ router.put('/findById/:memberId',function(req,res){
 		_id : req.params.memberId
 	},
 	{ 
-		name  : req.body.name,
-		title  : req.body.title,
-		onDuty : req.body.onDuty,
-		isChecked : req.body.isChecked,
-		mission : req.body.mission
+		name  		: req.body.name,
+		title  		: req.body.title,
+		onDuty 		: req.body.onDuty,
+		isChecked 	: req.body.isChecked,
+		workingTime : req.body.workingTime,
+		radioCode 	: req.body.radioCode,
+		branch 		: req.body.branch,
+		corps  		: req.body.corps
 
 	},
 	function(err){
@@ -119,6 +126,13 @@ router.put('/',function(req,res){
 		if (err) {return err};
 		res.json("modified")
 	});
+})
+
+router.delete('/:memberId',function(req,res){
+	Member.findOneAndRemove({
+		_id : req.params.memberId
+	},function(){
+	})
 })
 
 router.put('/total', function(req,res){

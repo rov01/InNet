@@ -4,60 +4,71 @@
 * Description
 */
 angular.module('InNet')
-.controller('MemberModalCtrl', ['$scope', 'branch', 'MemberSvc', '$modalInstance', '$state', 'member','BranchSvc',
-	function ($scope, branch, MemberSvc, $modalInstance, $state, member, BranchSvc ) {
+.controller('MemberModalCtrl', ['$scope', 'branch', 'MemberSvc', '$modalInstance', '$state', 'member','BranchSvc', 'UserSvc',
+	function ($scope, branch, MemberSvc, $modalInstance, $state, member, BranchSvc, UserSvc ) {
 
 	$scope.isNew = _.isEmpty(member);
-	
-	BranchSvc.fetch(UserSvc.userCorps())
-	.success(function(branches){
-		$scope.branches = branches 
-	})
-	.then(function(){
-		var branchesList = [];
-		for (var i = 0; i < $scope.branches.length; i++) {
-			branchesList.push($scope.branches[i].name);
+
+	$scope.member = {
+		id 		 	: member.id ||  "", 
+		name 	 	: member.name || null , 
+		title    	: "消防隊員",
+		titles   	: ["消防隊員","小隊長","分隊長","中隊長","大隊長","副大隊長"],
+		branch   	: member.branch || branch,
+		workingTime : member.workingTime ||  null,
+		radioCode 	: member.radioCode ||  null, 
+		mission  	: "瞄子手",
+		missions 	: ["瞄子手","副瞄子手","司機","帶隊官","安全管制員","聯絡官"],
+		corps	 	: UserSvc.userCorps(),
+		corpss 	 	: ["第一救災救護大隊","第三救災救護大隊"],
+	};
+
+	BranchSvc.fetch(UserSvc.userCorps()).success(function(branches){
+		$scope.branches = branches; 
+		if (!$scope.isNew) {
+			var branchArry = [];
+			for (var i = branches.length - 1; i >= 0; i--) {
+				branchArry.push(branches[i].name);
+			};
+			$scope.member.branches = branchArry;
+		}; 
+	});
+
+	var radioCodePrefix = function(branch){
+		var suffix =  branch.split('').slice(-2).join('');
+		if (suffix == "大隊" || suffix == "中隊") {
+			return "北海";
+		} else{
+			return branch.split('').slice(0,2).join('');
 		};
-		$scope.member = {
-			name 	: member.name || "新進人員", 
-			title   : member.title,
-			titles  : ["隊員","小隊長","分隊長","中隊長","大隊長","副大隊長"],
-			branch  : branch,
-			branches : branchesList,
-			corp 	: "第一救災救護大隊",
-			corps 	: ["第一救災救護大隊"],
-		};
-	})
+	};
 
 	$scope.save = function(){
-		MemberSvc.create({
-			  onDuty: "true",
-			  id: "",
-			  name: $scope.member.name || "王小明",
-			  corp: $scope.member.corp,
-			  branch: $scope.member.branch,
-			  title: $scope.member.title,
-			  isChecked: "false",
-			  mission : "瞄子手",
-			  missions : ["瞄子手","副瞄子手","司機","帶隊官","安全管制員","聯絡官"]
-		});
-		$modalInstance.dismiss('cancel');
-		$state.reload();
+		$scope.member.radioCodePrefix = radioCodePrefix($scope.member.branch);
+		MemberSvc.create($scope.member).success(function(){
+			$scope.member.workingTime = moment.duration(parseInt($scope.member.workingTime),'seconds');
+		}).then(function(){
+			$modalInstance.close($scope.member);
+		})
+		
 	};
 
 	$scope.update = function(){
-		MemberSvc.updateByMemberId({
+
+		var updateMember = {
 			  memberId  : member._id,
 			  id 		: "",
 			  name 		: $scope.member.name,
-			  corp 		: $scope.member.corp,
+			  corps 	: $scope.member.corps,
 			  branch 	: $scope.member.branch,
 			  title 	: $scope.member.title,
-			  mission 	: "瞄子手",
-			  missions  : ["瞄子手","副瞄子手","司機","帶隊官","安全管制員","聯絡官"]
-		});
-		$modalInstance.dismiss('cancel');
-		$state.reload();
+			  workingTime : $scope.member.workingTime,
+			  radioCode  : $scope.member.radioCode,
+			  radioCodePrefix : radioCodePrefix($scope.member.branch)
+		}
+
+		MemberSvc.updateByMemberId(updateMember);
+		$modalInstance.close(updateMember);
 	};
 
 	$scope.cancel = function(){

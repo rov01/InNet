@@ -18,6 +18,7 @@ var memberSchema = Schema({
 	onDuty			: { type : Boolean, default : true },
 	mission			: { type : String},
 	missions		: [{type : String}],
+	radioCodePrefix : { type : String},
 	radioCode 		: { type : Number},
 	workingTime 	: { type : Number}
 })

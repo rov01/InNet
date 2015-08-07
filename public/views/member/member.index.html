@@ -1,17 +1,6 @@
 <div class="row wrapper border-bottom white-bg page-heading">
     <div class="col-lg-10">
         <h2>人員資訊</h2>
-        <ol class="breadcrumb">
-            <li>
-                <a href="index.html">Home</a>
-            </li>
-            <li>
-                <a>Layout</a>
-            </li>
-            <li class="active">
-                <strong>人員資訊</strong>
-            </li>
-        </ol>
     </div>
     <div class="col-lg-2">
     </div>
@@ -34,18 +23,20 @@
 		            <table class="table table-striped">
 		                <thead>
 		                    <tr>
-		                        <th></th>
+		                        <th>無線電代號</th>
 		                        <th>姓名</th>
 		                        <th>職稱</th>
+		                        <th>氣量時間</th>
 		                        <th>分隊</th>
 		                        <th>大隊</th>
 		                    </tr>
 		                </thead>
 		                <tbody>
 		                    <tr ng-repeat="member in members track by $index">
-		                        <td></td>
+		                        <td>{{::member.radioCodePrefix}} {{::member.radioCode}}</td>
 		                        <td>{{::member.name}}</td>
 		                        <td>{{::member.title}}</td>
+		                        <th>{{::member.workingTime.minutes()}} 分鐘  {{::member.workingTime.seconds()}} 秒</th>
 		                        <td>{{::member.branch}}</td>
 		                        <td>{{::member.corps}}</td>
 		                    </tr>
