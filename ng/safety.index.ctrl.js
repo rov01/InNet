@@ -19,7 +19,13 @@ angular.module('InNet')
 			};
 		});
 
-		CaseSvc.fetchRelativeCase(UserSvc.userBranch()).success(function(cases){
+		var userCondition = {
+			branch : UserSvc.userBranch(),
+			accessLevel : UserSvc.accessLevel(),
+			corps : UserSvc.userCorps()
+		}
+
+		CaseSvc.fetchRelativeCase(userCondition).success(function(cases){
 			$scope.cases = cases;
 		});
 

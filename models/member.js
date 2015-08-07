@@ -20,7 +20,8 @@ var memberSchema = Schema({
 	missions		: [{type : String}],
 	radioCodePrefix : { type : String},
 	radioCode 		: { type : Number},
-	workingTime 	: { type : Number}
+	workingTime 	: { type : Number},
+	isUser 			: { type : Boolean, default : false }
 })
 
 module.exports = db.model('Member',memberSchema)

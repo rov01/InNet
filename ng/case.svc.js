@@ -14,8 +14,8 @@ angular.module('InNet')
 		return $http.get('/api/cases/details');
 	};
 
-	this.fetchRelativeCase = function(branch){
-		return $http.get('/api/cases/branch?branch=' + branch )
+	this.fetchRelativeCase = function(con){
+		return $http.get('/api/cases/branch?branch=' + con.branch + '&accessLevel=' + con.accessLevel + '&corps=' + con.corps );
 	}
 
 	this.fetchDetails = function( caseId){

@@ -78,7 +78,6 @@ router.get('/name',function(req,res){
 })
 
 router.get('/name/total',function(req,res){
-	console.log(req.query.branch);
 	Branch.findOne({
 		name : req.query.branch
 	})

@@ -29,16 +29,21 @@
 		                        <th>氣量時間</th>
 		                        <th>分隊</th>
 		                        <th>大隊</th>
+		                        <th>帳號狀態</th>
 		                    </tr>
 		                </thead>
 		                <tbody>
-		                    <tr ng-repeat="member in members track by $index">
+		                    <tr ng-repeat="member in members track by $index" ng-class="{ warning : member.isUser}">
 		                        <td>{{::member.radioCodePrefix}} {{::member.radioCode}}</td>
 		                        <td>{{::member.name}}</td>
 		                        <td>{{::member.title}}</td>
 		                        <th>{{::member.workingTime.minutes()}} 分鐘  {{::member.workingTime.seconds()}} 秒</th>
 		                        <td>{{::member.branch}}</td>
 		                        <td>{{::member.corps}}</td>
+		                        <td>
+		                        	<p ng-if="member.isUser">已開通</p>
+		                        	<p ng-if="!member.isUser">未開通</p>
+		                        </td>
 		                    </tr>
 		                </tbody>
 		            </table>

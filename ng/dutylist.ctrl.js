@@ -7,18 +7,13 @@ angular.module('InNet')
 .controller('DutyListCtrl', ['$scope', 'BranchSvc', '$stateParams', 'SocketSvc', 'UserSvc', '$q',
 	function ($scope, BranchSvc, $stateParams, SocketSvc, UserSvc, $q) {
 
-
-
-		if (UserSvc.accessLevel() < 2 ) {
+		if (UserSvc.accessLevel() < 3 ) {
 			var branch = UserSvc.userBranch();
 		} else{
 			var branch = $stateParams.branch
 		};
 
-		
-
 		BranchSvc.totalListFindByName(branch).success(function(branch){
-			console.log(branch);
 			$scope.branch = branch;
 			$scope.onDutyTotal = totalCount($scope.branch)
 		});

@@ -82,15 +82,27 @@ router.get('/',function(req,res){
 })
 
 router.get('/branch',function(req,res){
-	Case.find({
-		branches : { $in : [req.query.branch] }
-	})
-	.sort('-id')
-	.limit(3)
-	.populate('cars')
-	.exec(function(err,old_case){
-		res.json(old_case)
-	})
+	if (req.query.accessLevel > 1 ) {
+		Case.find({
+			$and : [ { isOngoing : true} , { corps : req.query.corps } ]
+		})
+		.sort('-id')
+		.limit(3)
+		.populate('cars')
+		.exec(function(err,old_case){
+			res.json(old_case)
+		})
+	} else{
+		Case.find({
+			$and : [ { branches : { $in : [req.query.branch] } } , { isOngoing : true}, { corps : req.query.corps } ]
+		})
+		.sort('-id')
+		.limit(3)
+		.populate('cars')
+		.exec(function(err,old_case){
+			res.json(old_case)
+		})
+	};
 })
 
 router.get('/details/:caseId',function(req,res){

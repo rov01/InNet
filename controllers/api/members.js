@@ -116,7 +116,7 @@ router.put('/',function(req,res){
 		_id : req.query.id
 	},
 	{ 
-		$set :{
+		$set : {
 			isChecked : req.body.isChecked,
 			mission   : req.body.mission 
 		}
