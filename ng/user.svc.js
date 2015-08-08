@@ -10,8 +10,12 @@ angular.module('InNet')
 		return $http.get('/api/users/userState');
 	};
 
-	this.register = function(){
-		return $http.post('/api/users');
+	this.activate = function(user){
+		return $http.post('/api/users', user);
+	};
+
+	this.removeUser = function(username){
+		return $http.delete('/api/users/delete?username=' + username);
 	};
 
 	this.login = function(user){

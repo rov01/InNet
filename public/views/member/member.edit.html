@@ -10,7 +10,20 @@
 		<div class="panel-body">
 			<div class="row">
 				<div class="col-xs-9">
-					<alert ng-repeat="alert in alerts" type="{{alert.type}}" close="closeAlert($index)" ng-if="isDeleted">{{alert.msg}}</alert>
+					<div class="alert alert-{{alert.type}}" role="alert" ng-repeat="alert in alerts">
+						<div class="row">
+							<div class="col-md-9">
+								{{alert.msg}}
+							</div>
+							<div class="col-md-3">
+								<button ng-if="alert.type != 'danger' " type="button" class="close" data-dismiss="alert" aria-label="Close" ng-click="closeAlert($index)"><span aria-hidden="true">&times;</span></button>
+								<div ng-if="alert.type == 'danger'">
+									<div class="btn btn-success"  ng-click="alert.execute($index)">確認</div>
+									<div class="btn btn-info" ng-click="alert.cancel($index)">取消</div>
+								</div>
+							</div>
+						</div>				
+					</div>
 				</div>
 				<div class="col-xs-3">
 					<div class="btn btn-success btn-block" ng-click="addNewMember()">
@@ -52,7 +65,9 @@
 		                        </td>
 		                        <td>
 		                        	<div class="btn btn-primary" ng-click="update(member)">修改</div>
-		                        	<div class="btn btn-danger" ng-click="delete(member)">刪除</div>
+		                        	<div class="btn btn-danger" ng-click="deleteAlert(member)">刪除</div>
+		                        	<div class="btn btn-warning" ng-click="activateAccount(member)" ng-if="!member.isUser">帳號開通</div>
+		                        	<div class="btn btn-info" ng-click="deActivateAlert(member)" ng-if="member.isUser">帳號關閉</div>
 		                        </td>
 		                    </tr>
 	                    </tbody>

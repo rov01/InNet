@@ -25,6 +25,7 @@ router.use(function(req,res, next){
 })
 
 router.post('/',function(req,res){
+	console.log(req.body)
 
 	var member = new Member({
 		title 			: req.body.title,  
@@ -38,8 +39,6 @@ router.post('/',function(req,res){
 		radioCodePrefix : req.body.radioCodePrefix,
 		workingTime 	: parseInt(req.body.workingTime)
 	});
-
-
 
 	member.save(function(err){
 		if (err) {return err};
@@ -91,6 +90,7 @@ router.get('/findById/:memberId',function(req,res){
 })
 
 router.put('/findById/:memberId',function(req,res){
+	console.log(req.body)
 	Member.findOneAndUpdate({
 		_id : req.params.memberId
 	},
@@ -131,9 +131,39 @@ router.put('/',function(req,res){
 router.delete('/:memberId',function(req,res){
 	Member.findOneAndRemove({
 		_id : req.params.memberId
-	},function(){
+	},function(err){
+		if (err) { return err };
 	})
 })
+
+router.put('/user',function(req,res){
+	Member.findOneAndUpdate({
+		name : req.query.username
+	},{
+		$set : {
+			isUser : true 
+		}
+	},function(err){
+		if (err) {
+			return err
+		};
+	});
+});
+
+router.put('/user/remove',function(req,res){
+	
+	Member.findOneAndUpdate({
+		name : req.query.username
+	},{
+		$set : {
+			isUser : false
+		}
+	},function(err){
+		if (err) {
+			return err
+		};
+	});
+});
 
 router.put('/total', function(req,res){
 	Member.update({},{isChecked : false},{multi : true }, function(err){

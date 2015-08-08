@@ -34,8 +34,18 @@ angular.module('InNet')
 		return $http.put('/api/members?id=' + memberData.memberId, memberData)
 	}
 
+	this.updateUser = function(username){
+		return $http.put('/api/members/user?username='+ username);
+	}
+
+	this.removeUser = function(username){
+		return $http.put('/api/members/user/remove?username=' + username)
+	}
+
 	this.deleteMember = function(member){
 		return $http.delete('/api/members/' + member._id)
 	}
+
+	
 
 }])

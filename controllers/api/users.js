@@ -11,6 +11,32 @@ var jwt 	= require('jsonwebtoken');
 var bcrypt  = require('bcrypt');
 var config  = require('../../config/config');
 
+router.post('/',function(req,res,next){
+	User.findOne({
+		username : req.body.name
+	},function(err,user){
+		if (!user) {
+			var user = new User({
+				username : req.body.name,
+				account  : req.body.account,
+				branch	 : req.body.branch,
+				corps 	 : req.body.corps,
+				radioCode : req.body.radioCode
+			})
+			bcrypt.hash(req.body.password, 10, function(err,hash){
+				if (err) {return next(err)}
+				user.password = hash
+				user.save(function(err){
+					if (err) {return next(err)}
+					res.send(201)
+				}) 
+			});
+		} else{
+			res.json("user already exist");
+		};
+	})
+})
+
 router.get('/',function(req,res,next){
 	if (!req.headers['x-auth']) {
 		return res.send(401)
@@ -32,23 +58,6 @@ router.get('/userState',function(req,res){
 		} else{
 			res.json(users);
 		};
-	})
-})
-
-router.post('/',function(req,res,next){
-	var user = new User({
-		account	 : req.body.account,
-		username : req.body.username,
-		password : req.body.password,
-		branch	 : req.body.branch,
-	})
-	bcrypt.hash(req.body.password, 10, function(err,hash){
-		if (err) {return next(err)}
-		user.password = hash
-		user.save(function(err){
-			if (err) {return next(err)}
-			res.send(201)
-		}) 
 	})
 })
 
@@ -80,6 +89,15 @@ router.post('/authenticate', function(req,res){
 			});
 		};
 	})
-})
+});
+
+router.delete('/delete',function(req,res){
+	User.findOneAndRemove({
+		username : req.query.username
+	},function(err){
+		if (err) {return err}
+		res.json({ username : req.query.username})
+	});
+});
 
 module.exports = router
