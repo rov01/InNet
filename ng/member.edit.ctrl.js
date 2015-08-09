@@ -5,6 +5,7 @@ angular.module('InNet')
 		$scope.alerts = [];
 		$scope.memberDeleted = false;
 		var tempDelMember = null;
+		$scope.accessLevel = UserSvc.accessLevel();
 		
 		var memberInit = function(){
 			MemberSvc.findByBranch($stateParams.branch).success(function(members){

@@ -28,12 +28,10 @@ angular.module('InNet')
 				director : $scope.branch.director
 			}).success(function(){
 				for (var i = 0; i < $scope.branch.members.length; i++) {
-					MemberSvc.updateByMemberId({
-						name 	: $scope.branch.members[i].name,
-						title   : $scope.branch.members[i].title,
+					MemberSvc.updateOnDuty({
 						memberId : $scope.branch.members[i]._id,
-						onDuty : $scope.branch.members[i].onDuty,
-						mission :  $scope.branch.members[i].mission
+						onDuty   : $scope.branch.members[i].onDuty,
+						mission  : $scope.branch.members[i].mission
 					});
 				};
 			}).then(function(){

@@ -18,6 +18,10 @@ angular.module('InNet')
 		return $http.get('/api/members/onDuty?branch=' + branch);
 	}
 
+	this.updateOnDuty = function(member){
+		return $http.put('/api/members/onDuty/findById?memberId=' + member.memberId, member);
+	};
+
 	this.create = function(member){
 		return $http.post('/api/members/', member)
 	}

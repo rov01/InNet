@@ -7,9 +7,9 @@ angular.module('InNet')
 .controller('DutyListCtrl', ['$scope', 'BranchSvc', '$stateParams', 'SocketSvc', 'UserSvc', '$q',
 	function ($scope, BranchSvc, $stateParams, SocketSvc, UserSvc, $q) {
 
-		if (UserSvc.accessLevel() < 3 ) {
+		if (UserSvc.accessLevel() < 2 ) {
 			var branch = UserSvc.userBranch();
-		} else{
+		} else {
 			var branch = $stateParams.branch
 		};
 
