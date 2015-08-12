@@ -147,7 +147,7 @@ angular.module('InNet')
         .state('director.dutylist.index',{
             url : "/index",
             templateUrl: "views/dutylist/director.dutylist.index.html",
-            controller : "DutyListCtrl",
+            controller : "DirDutyListCtrl",
         })
 
         .state('director.dutylist.edit',{

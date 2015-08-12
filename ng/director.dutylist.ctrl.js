@@ -4,10 +4,10 @@
 * Description
 */
 angular.module('InNet')
-.controller('DutyListCtrl', ['$scope', 'BranchSvc', '$stateParams', 'SocketSvc', 'UserSvc', '$q',
-	function ($scope, BranchSvc, $stateParams, SocketSvc, UserSvc, $q) {
+.controller('DirDutyListCtrl', ['$scope', 'UserSvc', 'BranchSvc', 
+	function ($scope, UserSvc, BranchSvc) {
 
-		var branch = $stateParams.branch
+		var branch = UserSvc.userBranch();
 		
 		BranchSvc.totalListFindByName(branch).success(function(branch){
 			$scope.branch = branch;
@@ -23,4 +23,5 @@ angular.module('InNet')
 			};
 			return total
 		};
+	
 }])
