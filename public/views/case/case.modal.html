@@ -32,6 +32,24 @@
 					<select class="form-control m-b" ng-model='caseObj.type', ng-options='type for type in caseObj.types'></select>
 				</div>
             </div>
+            <div class="form-group">
+                <label class="col-lg-2 control-label">搶救環境</label>
+                <div class="col-lg-10">
+                    <select class="form-control m-b" ng-model='caseObj.env', ng-options='env for env in caseObj.envs'></select>
+                </div>
+            </div>
+             <div class="form-group" ng-if="caseObj.env==caseObj.envs[0]">
+                <label class="col-lg-2 control-label">搶救樓層</label>
+                <div class="col-lg-10">
+                    <input type="text" class="form-control login-input" placeholder="caseObj.floor" ng-model="caseObj.floor">
+                </div>
+            </div>
+             <div class="form-group">
+                <label class="col-lg-2 control-label">火警提示</label>
+                <div class="col-lg-10">
+                    <select class="form-control m-b" ng-model='nftOption.nft', ng-options='nft.type for nft in nftOption.nfts'></select>
+                </div>
+            </div>
         </form>
         <div class="hr-line-dashed"></div>
         <div class="panel panel-default">

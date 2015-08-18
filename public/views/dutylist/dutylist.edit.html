@@ -1,17 +1,6 @@
 <div class="row wrapper border-bottom white-bg page-heading">
     <div class="col-lg-10">
         <h2>派遣人員登錄</h2>
-        <ol class="breadcrumb">
-            <li>
-                <a href="index.html">Home</a>
-            </li>
-            <li>
-                <a>Layout</a>
-            </li>
-            <li class="active">
-                <strong>Duty List</strong>
-            </li>
-        </ol>
     </div>
     <div class="col-lg-2">
     </div>
@@ -54,8 +43,8 @@
                                 <td>{{::member.title}}</td>
                                 <td><select class="form-control m-b" ng-model='member.mission', ng-options='mission for mission in member.missions'></select></td>
                                 <td>
-                                    <div class="btn btn-primary" ng-if="member.onDuty" ng-click="check(member)">在隊</div>
-                                    <div class="btn btn-warning" ng-if="!member.onDuty" ng-click="check(member)">不在隊</div>
+                                    <div class="btn btn-primary" ng-if="member.onDuty" ng-click="check(member)">可出勤</div>
+                                    <div class="btn btn-warning" ng-if="!member.onDuty" ng-click="check(member)">不可出勤</div>
                                 </td>
                             </tr>
                         </tbody>

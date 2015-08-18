@@ -23,9 +23,15 @@ angular.module('InNet')
 		};
 
 		$scope.save = function(){
+
+			var DispatchNumber = $scope.branch.members.filter(function(member) {
+				return member.onDuty
+			});
+
 			BranchSvc.updateDirector({
 				branch   : $scope.branch.name,
-				director : $scope.branch.director
+				director : $scope.branch.director,
+				dispatchNum : DispatchNumber.length
 			}).success(function(){
 				for (var i = 0; i < $scope.branch.members.length; i++) {
 					MemberSvc.updateOnDuty({

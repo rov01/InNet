@@ -7,14 +7,17 @@ angular.module('InNet')
 .controller('SafetyManageCtrl', ['$scope','$stateParams', '$modal', 'StSvc', '$state', 'MemberSvc','$log', 'UserSvc', 'BranchSvc', 'SocketSvc',
 	function ($scope, $stateParams, $modal, StSvc, $state, MemberSvc, $log, UserSvc, BranchSvc, SocketSvc) {
 
+		$scope.quickStart =  false;
+
 		var branch = UserSvc.userBranch();
 
 		BranchSvc.fetchByName(branch).success(function(details){
 			$scope.details = details;
-		});
-
-		StSvc.fetch($stateParams.id,branch).success(function(sts){
-			$scope.strikeTeams = sts;
+		}).then(function(){
+			StSvc.fetch($stateParams.id,branch).success(function(sts){
+				$scope.strikeTeams = sts;
+				if ($scope.details.members.length < 8 && _.isEmpty($scope.strikeTeams)) { $scope.quickStart = true  }; 
+			});
 		});
 
 		SocketSvc.on('newSt', function(st){
@@ -98,6 +101,45 @@ angular.module('InNet')
 	       	})
 
 	       	$scope.strikeTeams.splice(id,1);
+		};
+
+		$scope.quickOrganizing = function(){
+			$scope.quickStart = false;
+		
+			var members =  $scope.details.members.filter(function(member) {
+				if ( member.mission == '司機' || member.mission == '安全管制員' || member.mission == '救護人員') {
+					return false  
+				}else{
+					return true;
+				}
+			});
+
+		 	var strikeTeam = {
+	      		id 		    : 1, 
+	      		caseId      : $stateParams.id,
+	      		branch      : $scope.details.name,
+	      		director    : $scope.details.director,
+	      		position    : "第一面",
+	      		positions   : ["第一面","第二面","第三面","第四面"],
+	      		mission     : "滅火小組",
+	      		missions    : ["滅火小組","破壞小組","搜救小組"],
+	      		area 		: "第一區",
+	      		areas 		: ["第一區","第二區","第三區","第四區","第五區"],
+	      		members     : members,
+	      		isDismissed : false,
+	      		workingTime : _.min(members, function(member){ return member.workingTime; }).workingTime,
+	      		creator 	: UserSvc.currentUser() 	
+	      	};
+
+	      	for (var i = members.length - 1; i >= 0; i--) {
+    			MemberSvc.updateIsChecked({
+    				memberId  : members[i]._id,
+    				isChecked : true,
+    				mission	  : members[i].mission
+    			});		
+		    };
+
+	      	SocketSvc.emit("createStrikeTeam", strikeTeam)
 		};
 
 		$scope.$on('$destroy', function (event) {

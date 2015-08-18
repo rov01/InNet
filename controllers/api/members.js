@@ -126,6 +126,7 @@ router.put('/onDuty/findById',function(req,res){
 })
 
 router.put('/',function(req,res){
+	console.log(req.body)
 	Member.findOneAndUpdate({
 		_id : req.query.id
 	},

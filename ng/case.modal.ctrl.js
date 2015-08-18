@@ -4,8 +4,8 @@
 * Description
 */
 angular.module('InNet')
-.controller('CaseModalCtrl', ['$scope', 'CarSvc', '$modalInstance', 'CaseSvc','$state', 'caseId','caseDetails', 'StSvc', '$window', 'BranchSvc', 'UserSvc',
-	function ($scope, CarSvc, $modalInstance, CaseSvc, $state, caseId, caseDetails, StSvc , $window, BranchSvc, UserSvc) {
+.controller('CaseModalCtrl', ['$scope', 'CarSvc', '$modalInstance', 'CaseSvc','$state', 'caseId','caseDetails', 'StSvc', '$window', 'BranchSvc', 'UserSvc', 'NtfSvc',
+	function ($scope, CarSvc, $modalInstance, CaseSvc, $state, caseId, caseDetails, StSvc , $window, BranchSvc, UserSvc, NtfSvc) {
 
 	if (_.isEmpty(caseDetails)) {
 		$scope.isNew = true;
@@ -14,7 +14,15 @@ angular.module('InNet')
 	}else{
 		$scope.isNew = false;
 		var carObjs = caseDetails.cars;
-	}
+	};
+	
+	$scope.nftOption = {};
+
+	NtfSvc.fetch().success(function(nfts){
+		$scope.nftOption.nfts = nfts;
+	}).then(function(){
+		$scope.nftOption.nft = $scope.nftOption.nfts[0];
+	})
 
 	BranchSvc.fetch(UserSvc.userCorps()).success(function(branches){
 	    $scope.branches = branches;
@@ -53,7 +61,10 @@ angular.module('InNet')
 		address : caseDetails.address || null,
 		phone : caseDetails.phone || null,
 	    type : caseDetails.type ||  "火警", 
-	    types : [ "火警", "救護", "災害", "檢舉","其他"] ,
+	    types : [ "火警", "救護", "災害", "檢舉","其他"],
+	    env   : "住宅火警",
+	    envs  : ["住宅火警","高樓、地下與工廠","搶救困難區","其他"],
+	    floor : 1, 
 	    carIds : getCarsDetail(caseDetails).carIds  || [],
 	    dispatchList : getCarsDetail(caseDetails).dispatchList ||  [],
 	    branches : getCarsDetail(caseDetails).branches ||  []
@@ -122,7 +133,9 @@ angular.module('InNet')
 			branchIds : getBranchId($scope.caseObj.branches),
 	  		cars      : $scope.caseObj.carIds,
 			isOngoing : true,
-			corps 	  : UserSvc.userCorps()
+			corps 	  : UserSvc.userCorps(),
+			env 	  : $scope.caseObj.env,
+			floor 	  : $scope.caseObj.floor
 		}).success(function(newCase){
 			$modalInstance.close(newCase)
 		});
@@ -139,7 +152,9 @@ angular.module('InNet')
 			branches  : _.unique($scope.caseObj.branches),
 			branchIds : getBranchId($scope.caseObj.branches),
 	  		cars      : $scope.caseObj.carIds,
-			isOngoing : true, 
+			isOngoing : true,
+			env 	  : $scope.caseObj.env,
+			floor 	  : $scope.caseObj.floor
 		};
 		
 		CaseSvc.update(content);

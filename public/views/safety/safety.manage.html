@@ -8,7 +8,8 @@
 	    <div class="col-lg-2">
 	    	<div class="panel">
 	    		<div class="panel-body">
-	    			<div class="btn btn-success btn-block" ng-click="strikeTeam()">新增</div>	
+    				<div class="btn btn-success btn-block" ng-click="strikeTeam()" ng-if="!quickStart">新增</div>
+    				<div class="btn btn-info btn-block" ng-if="quickStart" ng-click="quickOrganizing()">快速編組</div>
 	    		</div>
 	    	</div>
 	    </div>		
@@ -31,7 +32,7 @@
 							<i class="fa fa-pause"></i>
 							<span>停止</span>
 						</div>
-						<div class="btn btn-warning btn-sm" ng-click="openSettingModal(strikeTeam, $index)">
+						<div class="btn btn-warning btn-sm" ng-click="openSettingModal(strikeTeam, $index)" ng-if="!timerRunning">
 							<i class="fa fa-cog"></i>
 							<span>設定</span>
 						</div>

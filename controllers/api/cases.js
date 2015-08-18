@@ -45,7 +45,9 @@ router.post('/',function(req,res){
 		branchIds		: req.body.branchIds,
 		cars 			: req.body.cars,
 		isOngoing 		: req.body.isOngoing,
-		corps 			: req.body.corps
+		corps 			: req.body.corps,
+		env 			: req.body.env,
+		floor			: req.body.floor
 	});
 
 	newCase.save(function(err, newCase){
@@ -188,7 +190,9 @@ router.put('/:caseId',function(req,res){
 			branches 		: req.body.branches,
 			branchIds		: req.body.branchIds,
 			cars 			: req.body.cars,
-			isOngoing 		: req.body.isOngoing
+			isOngoing 		: req.body.isOngoing,
+			env 			: req.body.env,
+			floor			: req.body.floor
 		}
 	},
 	function(err){
@@ -202,7 +206,9 @@ router.put('/:caseId',function(req,res){
 			branches 		: req.body.branches,
 			branchIds		: req.body.branchIds,
 			cars 			: req.body.cars,
-			isOngoing 		: req.body.isOngoing
+			isOngoing 		: req.body.isOngoing,
+			env 			: req.body.env,
+			floor			: req.body.floor
 		});
 		res.json({msg : "case modified"});
 	});

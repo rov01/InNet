@@ -51,8 +51,8 @@ angular.module('InNet')
 			}).success(function(){
 				for (var i = members.length - 1; i >= 0; i--) {
 		            MemberSvc.updateIsChecked({
-		                memberId  : members[i]._id,
-		                mission	  : members[i].mission, 
+		                memberId  : memberObjs[i]._id,
+		                mission	  : memberObjs[i].mission, 
 		                isChecked : true,
 		            })
 		        };

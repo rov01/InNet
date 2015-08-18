@@ -26,7 +26,9 @@ app.use('/api/users',   	require('./controllers/api/users'));
 app.use('/api/licenses', 	require('./controllers/api/licenses'));
 app.use('/api/cars', 		require('./controllers/api/cars'));
 app.use('/api/branch', 		require('./controllers/api/branch'));
-app.use('/api/strikeTeams', require('./controllers/api/strikeTeams'))
+app.use('/api/strikeTeams', require('./controllers/api/strikeTeams'));
+app.use('/api/nfts', 		require('./controllers/api/notifications'))
+
 
 var server = app.listen(port,function(){
 	console.log('server listening on ' +  port)

@@ -11,7 +11,7 @@
             <div class="row">
                 <div class="col-lg-8">
                     <div class="panel-title">
-                        <h2>{{branch.name}} 總人數: {{branch.members.length}} 上班人數 : {{onDutyTotal}} 今日主管 : {{branch.director}} </h2>
+                        <h2>{{branch.name}} 總人數: {{branch.members.length}} 上班人數 : {{onDutyTotal.length}} 今日主管 : {{branch.director}} </h2>
                     </div>
                 </div>
                 <div class="col-lg-4">
@@ -43,8 +43,8 @@
                                     <p ng-if="member.onDuty">{{member.mission}}</p>
                                 </td>
                                 <td>
-                                    <p ng-if="member.onDuty">在隊</p>
-                                    <p ng-if="!member.onDuty">不在隊</p>
+                                    <p ng-if="member.onDuty">可出勤</p>
+                                    <p ng-if="!member.onDuty">不可出勤</p>
                                 </td>
                             </tr>
                         </tbody>

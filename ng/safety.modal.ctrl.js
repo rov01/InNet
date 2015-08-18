@@ -26,8 +26,8 @@ angular.module('InNet')
 		$scope.strikeTeam = {
 			position  : "第一面",
 			positions : ["第一面","第二面","第三面","第四面"],
-			mission   : "搶救小組",
-			missions  : ["搶救小組","救援小組","搜救小組"],
+			mission   : "滅火小組",
+			missions  : ["滅火小組","破壞小組","搜救小組"],
 			area 	  : "第一區",
 			areas 	  : ["第一區","第二區","第三區","第四區","第五區"]
 		};

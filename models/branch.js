@@ -15,6 +15,8 @@ var BranchSchema = new Schema({
 	director : { type: String},
 	directors : [ { type : String } ],
 	members : [{  type: Schema.Types.ObjectId , ref: 'Member'}],
+	dispatchNum : { type : Number },
+	safetyManager : { type : Schema.Types.ObjectId, ref: 'Member'}
 })
 
 module.exports = db.model('Branch',BranchSchema)

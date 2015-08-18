@@ -40,25 +40,6 @@ router.get('/', function(req,res){
  	})
  })
 
-router.put('/',function(req,res){
-	Branch.findOneAndUpdate({
-		name : req.query.branch
-	},
-	{
-		$set : {
-			director : req.body.director
-		}
-	},
-	function(err){
-		if (err) {
-			return err
-		}else{
-			res.json({ result  : "modified"})
-			socketios.broadcast('onDutyUpdate',{ isUpated : true});
-		};
-	});
-})
-
 router.get('/name',function(req,res){
 	Branch.findOne({
 		name : req.query.branch
@@ -124,5 +105,26 @@ router.put('/:branch',function(req,res){
 		}
 	});
 })
+
+router.put('/',function(req,res){
+	Branch.findOneAndUpdate({
+		name : req.query.branch
+	},
+	{
+		$set : {
+			director : req.body.director,
+			dispatchNum : req.body.dispatchNum
+		}
+	},
+	function(err){
+		if (err) {
+			return err
+		}else{
+			res.json({ result  : "modified"})
+			socketios.broadcast('onDutyUpdate',{ isUpated : true});
+		};
+	});
+})
+
 
 module.exports = router

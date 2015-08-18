@@ -19,7 +19,7 @@ angular.module('InNet')
 		workingTime : member.workingTime ||  1200,
 		radioCode 	: member.radioCode ||  null, 
 		mission  	: "瞄子手",
-		missions 	: ["瞄子手","副瞄子手","司機","帶隊官","安全管制員","聯絡官"],
+		missions 	: ["瞄子手","副瞄子手","司機","小組長","安全管制員","聯絡官",],
 		corps	 	: UserSvc.userCorps(),
 		corpss 	 	: ["第一救災救護大隊","第三救災救護大隊"],
 	};
@@ -77,9 +77,6 @@ angular.module('InNet')
 		} else {
 			
 		};
-
-
-		
 	};
 
 	$scope.cancel = function(){
