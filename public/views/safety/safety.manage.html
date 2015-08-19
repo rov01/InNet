@@ -54,7 +54,8 @@
 						<div class="row">
 							<div class="col-sm-6">
 								<p class="list-group-item-text">負責區 : {{strikeTeam.position}}</p>
-								<p class="list-group-item-text">負責面 : {{strikeTeam.area}}</p>
+								<p class="list-group-item-text" ng-if="!apartment">負責面 : {{strikeTeam.area}}</p>
+								<p class="list-group-item-text" ng-if="apartment">負責樓層 : {{strikeTeam.floor}}</p>
 							</div>
 							<div class="col-sm-6">
 								<p class="list-group-item-text">任務 : {{strikeTeam.mission}}</p>

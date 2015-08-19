@@ -7,9 +7,11 @@ angular.module('InNet')
 .controller('SafetyManageCtrl', ['$scope','$stateParams', '$modal', 'StSvc', '$state', 'MemberSvc','$log', 'UserSvc', 'BranchSvc', 'SocketSvc', 'CaseSvc',
 	function ($scope, $stateParams, $modal, StSvc, $state, MemberSvc, $log, UserSvc, BranchSvc, SocketSvc, CaseSvc) {
 
-		$scope.quickStart =  false;
-
 		var BRANCH = UserSvc.userBranch();
+		var caseDetail = null;
+
+		$scope.quickStart =  false;
+		$scope.apartment = true; 
 		$scope.ACCESSLEVEL = UserSvc.accessLevel();
 
 		$scope.branchOptions = {
@@ -18,6 +20,8 @@ angular.module('InNet')
 		};
 
 		CaseSvc.findById($stateParams.id).success(function(_case){
+			caseDetail = _case;
+			_case.env == '住宅火警'? $scope.apartment = true : $scope.apartment = false; 
 			$scope.branchOptions.branches = _case.branches
 			$scope.branchOptions.branches.splice(0,0,BRANCH);
 		});
@@ -80,6 +84,9 @@ angular.module('InNet')
 			    	},
 			    	branch : function(){
 			    		return $scope.branchOptions.branch;
+			    	},
+			    	caseDetail : function(){
+			    		return caseDetail
 			    	}
 			    }
 		    });

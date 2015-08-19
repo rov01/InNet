@@ -36,6 +36,3 @@ var server = app.listen(port,function(){
 
 require('./socketios').connect(server);
 
-
-
-

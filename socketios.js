@@ -133,6 +133,8 @@ exports.connect = function(server){
 				missions		: strikeTeam.missions,
 				area 			: strikeTeam.area,
 				areas 			: strikeTeam.areas, 
+				floor 			: strikeTeam.floor,
+				floors 			: strikeTeam.floors,
 				members 		: strikeTeam.members, 
 				isDismissed		: strikeTeam.isDismissed, 
 				workingTime 	: strikeTeam.workingTime,

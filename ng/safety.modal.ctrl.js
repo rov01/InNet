@@ -4,8 +4,11 @@
 * Description
 */
 angular.module('InNet')
-.controller('SafetyModalCtrl', ['$scope','$modalInstance', '$stateParams','StSvc', 'MemberSvc', '$state', '$window', 'stId', 'UserSvc', 'BranchSvc','SocketSvc','branch',
-	function ($scope, $modalInstance, $stateParams, StSvc, MemberSvc, $state, $window, stId, UserSvc,  BranchSvc, SocketSvc, branch) {
+.controller('SafetyModalCtrl', ['$scope','$modalInstance', '$stateParams','StSvc', 'MemberSvc', '$state', '$window', 'stId', 'UserSvc', 'BranchSvc','SocketSvc','branch', 'caseDetail',
+	function ($scope, $modalInstance, $stateParams, StSvc, MemberSvc, $state, $window, stId, UserSvc,  BranchSvc, SocketSvc, branch, caseDetail) {
+
+		$scope.alerts = [];
+		caseDetail.env == '住宅火警'? $scope.apartment =  true  : $scope.apartment = false 
  
 		$scope.title = branch +  (stId + 1 );
 
@@ -28,7 +31,9 @@ angular.module('InNet')
 			mission   : "滅火小組",
 			missions  : ["滅火小組","破壞小組","搜救小組"],
 			area 	  : "第一區",
-			areas 	  : ["第一區","第二區","第三區","第四區","第五區"]
+			areas 	  : ["第一區","第二區","第三區","第四區","第五區"],
+			floor 	  : caseDetail.floor, 
+			floors    : caseDetail.floor < 5? _.range(1,6,1) : _.range(caseDetail.floor-2,caseDetail.floor+3,1)
 		};
 
 		$scope.check = function(member){
@@ -44,7 +49,7 @@ angular.module('InNet')
 		    				return member.isChecked === true 
 	    				});
 
-	    	if (members.length > -1) {
+	    	if (members.length > 2 ) {
 
 		    	var strikeTeam = {
 		      		id 		    : stId + 1 || 0 , 
@@ -56,7 +61,9 @@ angular.module('InNet')
 		      		mission     : $scope.strikeTeam.mission,
 		      		missions    : $scope.strikeTeam.missions, 
 		      		area 		: $scope.strikeTeam.area,
-		      		areas 		: $scope.strikeTeam.areas, 
+		      		areas 		: $scope.strikeTeam.areas,
+		      		floor 		: $scope.strikeTeam.floor,
+		      		floors 		: $scope.strikeTeam.floors,
 		      		members     : members,
 		      		isDismissed : false,
 		      		workingTime : _.min(members, function(member){ return member.workingTime; }).workingTime,
@@ -68,15 +75,17 @@ angular.module('InNet')
 	    				memberId  : members[i]._id,
 	    				isChecked : members[i].isChecked,
 	    				mission	  : members[i].mission
-	    			})		
+	    			});		
 		    	};
 
-		      	// StSvc.create(strikeTeam)
 		      	SocketSvc.emit("createStrikeTeam", strikeTeam)
 		      	$modalInstance.close();
-	    	}else{
-	    		$window.alert("you must organize strike team")
+	    	} else {
+	    		$scope.alerts.push({ type : "danger" ,  msg: '兩人以上才能編組'});
 	    	};
 		};
-	
+
+		$scope.closeAlert = function(index){
+			$scope.alerts.splice(index,1)
+		};
 }]);

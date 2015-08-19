@@ -5,7 +5,7 @@
 	    	<div class="table-responsive">
 	    		<table class="table table table-bordered">
 		    		<thead>
-		    			<tr>
+		    			<tr ng-if="!apartment">
 		    				<th></th>
 		    				<th>第一區</th>
 		    				<th>第二區</th>
@@ -13,11 +13,19 @@
 		    				<th>第四區</th>
 		    				<th>第五區</th>
 		    			</tr>
+		    			<tr ng-if="apartment">
+		    				<th></th>
+		    				<th ng-repeat=" floor in position.floors"> {{floor}} 樓</th>
+		    			</tr>
 		    		</thead>
 		    		<tbody>
-		    			<tr ng-repeat="deploy in deploys">
+		    			<tr ng-repeat="deploy in deploys" ng-if="!apartment">
 		    				<td>第 {{$index + 1 }} 面</td>
 		    				<td ng-repeat="area in deploy track by $index"><p ng-if="area.stTotal> 0">{{ area.stTotal}} 組 ({{area.totalMember}}人)</p></td>
+		    			</tr>
+		    			<tr ng-repeat="deploy in deploys" ng-if="apartment">
+		    				<td>第 {{ $index + 1  }} 面</td>
+		    				<td ng-repeat="floor in deploy track by $index"><p ng-if="floor.stTotal> 0">{{ floor.stTotal}} 組 ({{floor.totalMember}}人)</p></td>
 		    			</tr>
 		    		</tbody>
 		    	</table>
@@ -57,7 +65,8 @@
 					<div class="list-group-item">
 						<div class="row">
 							<div class="col-sm-6">
-								<p class="list-group-item-text">位置 : {{::strikeTeam.position}}</p>
+								<p class="list-group-item-text" ng-if="!apartment">負責區面 : {{::strikeTeam.position}}</p>
+								<p class="list-group-item-text" ng-if="apartment">負責樓層 : {{strikeTeam.floor}}</p>
 							</div>
 							<div class="col-sm-6">
 								<p class="list-group-item-text">任務 : {{::strikeTeam.mission}}</p>

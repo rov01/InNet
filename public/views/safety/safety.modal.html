@@ -10,16 +10,32 @@
     </div>
     <div class="modal-body">
     	 <form class="form-horizontal">
+            <div class="alert alert-{{alert.type}}" role="alert" ng-repeat="alert in alerts">
+                <div class="row">
+                    <div class="col-md-9">
+                        {{alert.msg}}
+                    </div>
+                    <div class="col-md-3">
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close" ng-click="closeAlert($index)"><span aria-hidden="true">&times;</span></button>
+                    </div>
+                </div>              
+            </div>
             <div class="form-group">
             	<label class="col-xs-4 control-label">作戰位置</label>
                 <div class="col-xs-8">
                      <select class="form-control" ng-model="strikeTeam.position" ng-options="position for position in strikeTeam.positions"></select>
                 </div>
             </div>
-            <div class="form-group">
+            <div class="form-group" ng-if="!apartment">
                 <label class="col-xs-4 control-label">作戰區域</label>
                 <div class="col-xs-8">
                      <select class="form-control" ng-model="strikeTeam.area" ng-options="area for area in strikeTeam.areas"></select>
+                </div>
+            </div>
+             <div class="form-group" ng-if="apartment">
+                <label class="col-xs-4 control-label">作戰樓層</label>
+                <div class="col-xs-8">
+                     <select class="form-control" ng-model="strikeTeam.floor" ng-options="floor for floor in strikeTeam.floors"></select>
                 </div>
             </div>
             <div class="form-group">

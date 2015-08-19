@@ -4,8 +4,8 @@
 * Description
 */
 angular.module('InNet')
-.controller('SummaryCtrl', ['$scope', 'StSvc', '$stateParams', '$interval', '$state', 'SocketSvc',
-	function ($scope, StSvc, $stateParams, $interval, $state, SocketSvc) {
+.controller('SummaryCtrl', ['$scope', 'StSvc', '$stateParams', '$interval', '$state', 'SocketSvc', 'CaseSvc',
+	function ($scope, StSvc, $stateParams, $interval, $state, SocketSvc, CaseSvc) {
 
 		SocketSvc.on('timerRunning',function(st){
 			for (var i = $scope.strikeTeams.length - 1; i >= 0; i--) {
@@ -33,6 +33,8 @@ angular.module('InNet')
 			$scope.deploys = initTable($scope.strikeTeams);
 		});
 
+		
+
 		SocketSvc.on('updateSt', function(data){
 			StSvc.fetchByCase(caseId).success(function(strikeTeams){
 				$scope.strikeTeams = strikeTeams;
@@ -52,7 +54,17 @@ angular.module('InNet')
 		});
 
 
-		var caseId = $stateParams.id; 
+		var caseId = $stateParams.id;
+		CaseSvc.findById(caseId).success(function(_case){
+			_case.env == '住宅火警' ? $scope.apartment = true : $scope.apartment = false;
+			$scope.caseDetail = _case;
+			$scope.position = {
+				defaultPos 	: "第一面",
+				positions 	: ["第一面","第二面","第三面","第四面"],
+				floor 		: $scope.caseDetail.floor,
+				floors  	: $scope.caseDetail.floor < 5? _.range(1,6,1) : _.range($scope.caseDetail.floor-2,$scope.caseDetail.floor+3,1)
+			};
+		})
 
 		StSvc.fetchByCase(caseId).success(function(strikeTeams){
 			$scope.strikeTeams = strikeTeams;
@@ -62,10 +74,7 @@ angular.module('InNet')
 			$scope.deploys = initTable($scope.strikeTeams);
 		});
 
-		$scope.position = {
-			defaultPos : "第一面",
-			positions : ["第一面","第二面","第三面","第四面"]
-		};
+
 
 		var initTable =  function(strikeTeams){
 		  	var deployArray = _.range(4).map(function () {
@@ -77,16 +86,18 @@ angular.module('InNet')
 			if ( strikeTeams ){
 				for (var i = strikeTeams.length - 1; i >= 0; i--) {
 					var totalMember = 0;
-					var st = 0;  
+					var y = null;
+					var st = 0;
 					var x = _.indexOf(strikeTeams[i].positions, strikeTeams[i].position);
-					var y = _.indexOf(strikeTeams[i].areas, strikeTeams[i].area);
+					$scope.apartment ? y = _.indexOf(strikeTeams[i].floors, strikeTeams[i].floor) : y = _.indexOf(strikeTeams[i].areas, strikeTeams[i].area)
 					deployArray[x][y].stTotal += 1;
-					deployArray[x][y].totalMember += strikeTeams[i].members.length;  
-
+					deployArray[x][y].totalMember += strikeTeams[i].members.length;
 				};
 			}
 			return deployArray
 		};
+
+		console.log(initTable($scope.strikeTeams))
 		
 		$scope.$on('$destroy', function (event) {
 	        SocketSvc.removeAllListeners();
