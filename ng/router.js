@@ -119,37 +119,31 @@ angular.module('InNet')
             templateUrl : "views/safety/safety.index.html",
             controller : "SafetyIndexCtrl"
         })
-
         .state('director.safety.management',{
             url : "/index/:id",
             templateUrl : "views/safety/safety.manage.html",
             controller : "SafetyManageCtrl"         
         })
-
         .state('director.safety.summary',{
             url : "/summary/:id",
             templateUrl : "views/summary/summary.index.html",
             controller : "SummaryCtrl"
         })
-
         .state('director.map',{
             url : "/map",
             templateUrl : "views/map/map.index.html",
             controller : "MapIndexCtrl"
         })
-
         .state('director.dutylist',{
             abstract : true,
             url : "/dutylist",
             template : "<ui-view>" 
         })
-
         .state('director.dutylist.index',{
             url : "/index",
             templateUrl: "views/dutylist/director.dutylist.index.html",
             controller : "DirDutyListCtrl",
         })
-
         .state('director.dutylist.edit',{
             url : "/edit",
             templateUrl: "views/dutylist/director.dutylist.edit.html",

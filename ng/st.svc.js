@@ -13,6 +13,10 @@ angular.module('InNet')
 		return $http.get('/api/strikeTeams/total?caseId=' + caseId);
 	};
 
+	this.findById = function(caseId){
+		return $http.get('/api/strikeTeams/' + caseId);
+	}
+
 	this.dismissSt = function(data){
 		return $http.put('/api/strikeTeams/dismiss?id=' + data.id);
 	};

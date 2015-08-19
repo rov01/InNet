@@ -4,10 +4,9 @@
 * Description
 */
 angular.module('InNet')
-.controller('SafetyModalCtrl', ['$scope','$modalInstance', '$stateParams','StSvc', 'MemberSvc', '$state', '$window', 'stId', 'UserSvc', 'BranchSvc','SocketSvc',
-	function ($scope, $modalInstance, $stateParams, StSvc, MemberSvc, $state, $window, stId, UserSvc,  BranchSvc, SocketSvc) {
-
-		var branch = UserSvc.userBranch(); 
+.controller('SafetyModalCtrl', ['$scope','$modalInstance', '$stateParams','StSvc', 'MemberSvc', '$state', '$window', 'stId', 'UserSvc', 'BranchSvc','SocketSvc','branch',
+	function ($scope, $modalInstance, $stateParams, StSvc, MemberSvc, $state, $window, stId, UserSvc,  BranchSvc, SocketSvc, branch) {
+ 
 		$scope.title = branch +  (stId + 1 );
 
 		BranchSvc.fetchByName(branch).success(function(details){

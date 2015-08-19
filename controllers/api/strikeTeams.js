@@ -52,7 +52,6 @@ router.post('/',function(req,res){
 				if (err) {
 					return err
 				} else{
-					// console.log(st);
 					res.json({msg : "Strike Team created"});
 					// socketios.broadcast('newSt',st);
 				};
@@ -80,40 +79,23 @@ router.put('/dismiss',function(req,res){
 })
 
 router.get('/',function(req,res){
-	if (req.decoded.accessLevel > 1 ) {
-		StrikeTeam.find({
-			$and : [
-				{ caseId 	  : req.query.caseId },
-				{ branch 	  : req.query.branch },
-				{ isDismissed : false }
-			]
-		})
-		.populate('members')
-		.exec(function(err, st){
-			if (err) {
-				return err
-			}else{
-				res.json(st)
-			}
-		});
-	} else {
-		StrikeTeam.find({
-			$and : [
-				{ caseId 	  : req.query.caseId },
-				{ branch 	  : req.query.branch },
-				{ isDismissed : false },
-				{ creator : req.decoded.username }
-			]
-		})
-		.populate('members')
-		.exec(function(err, st){
-			if (err) {
-				return err
-			}else{
-				res.json(st)
-			}
-		});
-	};
+
+	StrikeTeam.find({
+		$and : [
+			{ caseId 	  : req.query.caseId },
+			{ branch 	  : req.query.branch },
+			{ isDismissed : false }
+		]
+	})
+	.populate('members')
+	.exec(function(err, st){
+		if (err) {
+			return err
+		}else{
+			res.json(st)
+		}
+	});
+	
 })
 
 router.get('/total',function(req,res){

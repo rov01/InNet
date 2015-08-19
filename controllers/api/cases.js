@@ -150,7 +150,6 @@ router.put('/close',function(req,res){
 		$set : {
 			isOngoing : req.body.isOngoing
 		}
-		
 	},function(err){
 		if (err) {
 			return err

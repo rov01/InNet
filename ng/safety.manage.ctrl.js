@@ -4,25 +4,46 @@
 * Description
 */
 angular.module('InNet')
-.controller('SafetyManageCtrl', ['$scope','$stateParams', '$modal', 'StSvc', '$state', 'MemberSvc','$log', 'UserSvc', 'BranchSvc', 'SocketSvc',
-	function ($scope, $stateParams, $modal, StSvc, $state, MemberSvc, $log, UserSvc, BranchSvc, SocketSvc) {
+.controller('SafetyManageCtrl', ['$scope','$stateParams', '$modal', 'StSvc', '$state', 'MemberSvc','$log', 'UserSvc', 'BranchSvc', 'SocketSvc', 'CaseSvc',
+	function ($scope, $stateParams, $modal, StSvc, $state, MemberSvc, $log, UserSvc, BranchSvc, SocketSvc, CaseSvc) {
 
 		$scope.quickStart =  false;
 
-		var branch = UserSvc.userBranch();
+		var BRANCH = UserSvc.userBranch();
+		$scope.ACCESSLEVEL = UserSvc.accessLevel();
 
-		BranchSvc.fetchByName(branch).success(function(details){
+		$scope.branchOptions = {
+			branch : BRANCH,
+			branches : []
+		};
+
+		CaseSvc.findById($stateParams.id).success(function(_case){
+			$scope.branchOptions.branches = _case.branches
+			$scope.branchOptions.branches.splice(0,0,BRANCH);
+		});
+
+		BranchSvc.fetchByName(BRANCH).success(function(details){
 			$scope.details = details;
 		}).then(function(){
-			StSvc.fetch($stateParams.id,branch).success(function(sts){
+			if (ACCESSLEVEL > 1 ) {
+				StSvc.fetchByCase($stateParams.id).success(function(sts){
+					$scope.strikeTeams = sts; 
+				})
+			} else {
+				StSvc.fetch($stateParams.id,BRANCH).success(function(sts){
 				$scope.strikeTeams = sts;
-				if ($scope.details.members.length < 8 && _.isEmpty($scope.strikeTeams)) { $scope.quickStart = true  }; 
-			});
+					if ($scope.details.members.length < 8 && _.isEmpty($scope.strikeTeams)) { $scope.quickStart = true  }; 
+				}); 
+			};
 		});
 
 		SocketSvc.on('newSt', function(st){
-			if (angular.equals(branch,st.branch) && angular.equals($stateParams.id,st.caseId) ) {
-				$scope.strikeTeams.push(st);
+			if (ACCESSLEVEL >  1 && angular.equals($stateParams.id,st.caseId) ) {
+					$scope.strikeTeams.push(st);
+			} else {
+				if (angular.equals(BRANCH,st.branch) && angular.equals($stateParams.id,st.caseId) ) {
+					$scope.strikeTeams.push(st);
+				};
 			};
 		});
 
@@ -56,6 +77,9 @@ angular.module('InNet')
 			    		} else{
 			    			return $scope.strikeTeams[$scope.strikeTeams.length-1].id;
 			    		};
+			    	},
+			    	branch : function(){
+			    		return $scope.branchOptions.branch;
 			    	}
 			    }
 		    });
@@ -99,7 +123,6 @@ angular.module('InNet')
 		            })
 		        };	
 	       	})
-
 	       	$scope.strikeTeams.splice(id,1);
 		};
 
@@ -139,7 +162,7 @@ angular.module('InNet')
     			});		
 		    };
 
-	      	SocketSvc.emit("createStrikeTeam", strikeTeam)
+	      	SocketSvc.emit("createStrikeTeam", strikeTeam);
 		};
 
 		$scope.$on('$destroy', function (event) {
