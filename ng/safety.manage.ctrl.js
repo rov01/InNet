@@ -25,7 +25,7 @@ angular.module('InNet')
 		BranchSvc.fetchByName(BRANCH).success(function(details){
 			$scope.details = details;
 		}).then(function(){
-			if (ACCESSLEVEL > 1 ) {
+			if ($scope.ACCESSLEVEL > 1 ) {
 				StSvc.fetchByCase($stateParams.id).success(function(sts){
 					$scope.strikeTeams = sts; 
 				})
@@ -38,7 +38,7 @@ angular.module('InNet')
 		});
 
 		SocketSvc.on('newSt', function(st){
-			if (ACCESSLEVEL >  1 && angular.equals($stateParams.id,st.caseId) ) {
+			if ($scope.ACCESSLEVEL > 1 && angular.equals($stateParams.id,st.caseId) ) {
 					$scope.strikeTeams.push(st);
 			} else {
 				if (angular.equals(BRANCH,st.branch) && angular.equals($stateParams.id,st.caseId) ) {
