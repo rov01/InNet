@@ -21,7 +21,7 @@ router.post('/',function(req,res){
 			return err
 		} else {
 			res.json(201,"New Member created");
-		}
+		};
 	});
 });
 
@@ -29,8 +29,11 @@ router.get('/',function(req,res){
 	Member.find()
 	.sort('-date')
 	.exec(function(err, members){
-		if (err) {return err};
-		res.json(members);
+		if (err) {
+			return err
+		} else {
+			res.json(members);
+		};
 	});
 });
 	
@@ -42,8 +45,11 @@ router.get('/onDuty',function(req,res){
  	]})
  	.sort({radioCode : 1})
  	.exec(function(err,members){
- 		if (err) {throw err};
- 		res.json(members);
+ 		if (err) {
+ 			return err
+ 		} else {
+ 			res.json(members);
+ 		};
  	});
  });
 	

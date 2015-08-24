@@ -96,8 +96,6 @@ angular.module('InNet')
 			}
 			return deployArray
 		};
-
-		console.log(initTable($scope.strikeTeams))
 		
 		$scope.$on('$destroy', function (event) {
 	        SocketSvc.removeAllListeners();

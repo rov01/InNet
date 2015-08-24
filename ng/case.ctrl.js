@@ -49,7 +49,6 @@ angular.module('InNet')
 	    });
 	    modalInstance.result.then(function (msg) {
 	      // $scope.cases.unshift(newCase);
-	      console.log(msg);
 	    }, function () {
 	      $log.info('Modal dismissed at: ' + new Date());
 	    });

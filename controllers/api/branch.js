@@ -7,15 +7,15 @@ router.get('/', function(req,res){
  	Branch.find({ 
  		corps : req.query.corps
  	})
- 	.sort({id : 1})
+ 	.sort({ id : 1 })
  	.exec(function(err,branches){
  		if (err) { 
- 			return err
+ 			return err;
  		}else{
  			res.json(branches)
  		};
- 	})
- })
+ 	});
+ });
 
 router.get('/name',function(req,res){
 	Branch.findOne({
@@ -27,13 +27,13 @@ router.get('/name',function(req,res){
 			{path : "members", match : {onDuty : true }},
 			function(err, members){
 				if (err) {
-					return err
-				} else{
+					return err;
+				} else {
 					res.json(members);
 				};
-		})
-	})
-})
+		});
+	});
+});
 
 router.get('/name/total',function(req,res){
 	Branch.findOne({
@@ -42,12 +42,12 @@ router.get('/name/total',function(req,res){
 	.populate('members')
 	.exec(function(err,details){
 		if (err) {
-			return err
-		}else{
-			res.json(details)
-		}
-	})
-})
+			return err;
+		} else {
+			res.json(details);
+		};
+	});
+});
 
 router.get('/:id',function(req,res){
 	Branch.findOne({
@@ -56,12 +56,12 @@ router.get('/:id',function(req,res){
 	.populate('members')
 	.exec(function(err,details){
 		if (err) {
-			return err
-		}else{
-			res.json(details)
-		}
-	})
-})
+			return err;
+		} else {
+			res.json(details);
+		};
+	});
+});
 
 router.put('/:branch',function(req,res){
 	Branch.findOneAndUpdate({
@@ -76,12 +76,12 @@ router.put('/:branch',function(req,res){
 	},
 	function(err){
 		if (err) {
-			return err
+			return err;
 		}else{
 			res.send(200)
 		}
 	});
-})
+});
 
 router.put('/',function(req,res){
 	Branch.findOneAndUpdate({
@@ -89,19 +89,18 @@ router.put('/',function(req,res){
 	},
 	{
 		$set : {
-			director : req.body.director,
+			director 	: req.body.director,
 			dispatchNum : req.body.dispatchNum
 		}
 	},
 	function(err){
 		if (err) {
-			return err
-		}else{
-			res.send(200)
+			return err;
+		} else {
+			res.send(200);
 			socketios.broadcast('onDutyUpdate',{ isUpated : true});
 		};
 	});
-})
-
+});
 
 module.exports = router

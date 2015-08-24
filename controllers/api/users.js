@@ -17,25 +17,31 @@ router.post('/',function(req,res,next){
 	},function(err,user){
 		if (!user) {
 			var user = new User({
-				username : req.body.name,
-				account  : req.body.account,
-				branch	 : req.body.branch,
-				corps 	 : req.body.corps,
-				radioCode : req.body.radioCode
+				username 	: req.body.name,
+				account  	: req.body.account,
+				branch	 	: req.body.branch,
+				corps 	 	: req.body.corps,
+				radioCode 	: req.body.radioCode
 			})
 			bcrypt.hash(req.body.password, 10, function(err,hash){
-				if (err) {return next(err)}
-				user.password = hash
-				user.save(function(err){
-					if (err) {return next(err)}
-					res.send(201)
-				}) 
+				if (err) {
+					return err 
+				} else { 
+					user.password = hash
+					user.save(function(err){
+						if (err) {
+							return err;
+						} else {
+							res.send(201);
+						};
+					}); 
+				};
 			});
-		} else{
-			res.json("user already exist");
+		} else {
+			res.json(403,"user already exist");
 		};
-	})
-})
+	});
+});
 
 router.get('/',function(req,res,next){
 	if (!req.headers['x-auth']) {
@@ -43,10 +49,13 @@ router.get('/',function(req,res,next){
 	}
 	var auth = jwt.decode(req.headers['x-auth'], config.secret)
 	User.findOne({username:auth.username},function(err,user){
-		if (err) {return next(err)}
-		res.json(user)
-	})
-})
+		if (err) {
+			return  err; 
+		} else {
+			res.json(user)
+		}; 
+	});
+});
 
 router.get('/userState',function(req,res){
 	User.find({
@@ -54,8 +63,8 @@ router.get('/userState',function(req,res){
 	},
 	function(err,users){
 		if (err) {
-			return err
-		} else{
+			return err;
+		} else {
 			res.json(users);
 		};
 	})
@@ -65,29 +74,32 @@ router.post('/authenticate', function(req,res){
 	User.findOne({
 		account : req.body.account
 	},function(err,user){
-		if (err) { return err};
-		if (!user) {
-			res.json({ success : false, message : "Authenticate failed ! User not found"})
-		}else if(user){
-			bcrypt.compare(req.body.password, user.password, function(err,valid){
-				if (err) {
-					return  err
-					res.send(401);
-				} else {
-					if (valid) {
-						var token = jwt.sign(user,config.secret,{
-							expiresInMinutes:1440
-						});
-						res.json({
-							username : req.body.username,
-							success : true,
-							token :token 
-						});
-					}else{
-						res.json(401,{success : false, message : "Authenticate failed ! Wrong password"})
-					};
-				}
-			});
+		if (err) { 
+			return err;
+		} else {
+			if (!user) {
+				res.json({ success : false, message : "Authenticate failed ! User not found"})
+			} else if (user){
+				bcrypt.compare(req.body.password, user.password, function(err,valid){
+					if (err) {
+						return  err;
+						res.send(401);
+					} else {
+						if (valid) {
+							var token = jwt.sign(user,config.secret,{
+								expiresInMinutes:1440
+							});
+							res.json({
+								username : req.body.username,
+								success : true,
+								token :token 
+							});
+						} else {
+							res.json(401,{success : false, message : "Authenticate failed ! Wrong password"})
+						};
+					}
+				});
+			};
 		};
 	})
 });
@@ -96,8 +108,11 @@ router.delete('/delete',function(req,res){
 	User.findOneAndRemove({
 		username : req.query.username
 	},function(err){
-		if (err) {return err}
-		res.json(200,{ username : req.query.username})
+		if (err) {
+			return err;
+		} else { 
+			res.json(200,{ username : req.query.username})
+		};
 	});
 });
 

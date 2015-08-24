@@ -32,18 +32,19 @@ router.post('/',function(req,res){
 			return err;
 		} else {
 			Car.populate(newCase,
-				{ path : "cars" },
-				function(err, newCase){
+				{ 
+					path : "cars" 
+				},function(err, newCase){
 					if (err) {
-						return err
+						return err;
 					} else {
 						socketios.broadcast('newCase', newCase);
 					};
 			});
 			res.send(201);
-		}
+		};
 	});
-})
+});
 
 router.get('/',function(req,res){
 	Case.find({
@@ -53,12 +54,12 @@ router.get('/',function(req,res){
 	.limit(10)
 	.exec(function(err, old_case){
 		if (err) {
-			return err
+			return err;
 		} else {
 			res.json(old_case);
-		}
+		};
 	});
-})
+});
 
 router.get('/branch',function(req,res){
 	if (req.query.accessLevel > 1 ) {
@@ -69,8 +70,12 @@ router.get('/branch',function(req,res){
 		.limit(3)
 		.populate('cars')
 		.exec(function(err,old_case){
-			res.json(old_case)
-		})
+			if (err) {
+				return err
+			} else {
+				res.json(old_case)
+			};
+		});
 	} else {
 		Case.find({
 			$and : [ { branches : { $in : [req.query.branch] } } , { isOngoing : true}, { corps : req.query.corps } ]
@@ -79,10 +84,14 @@ router.get('/branch',function(req,res){
 		.limit(3)
 		.populate('cars')
 		.exec(function(err,old_case){
-			res.json(old_case)
-		})
+			if (err) {
+				return err
+			} else {
+				res.json(old_case);
+			};
+		});
 	};
-})
+});
 
 router.get('/details/:caseId',function(req,res){
 	Case.findById({
@@ -93,20 +102,20 @@ router.get('/details/:caseId',function(req,res){
 	.exec(function(err,old_case){
 		if (err) {
 			return err
-		}else{
+		} else {
 			Member
 			.populate(old_case,
 				{path : "branchIds.members", match : {onDuty : true }},
 				function(err, members){
 					if (err) {
-						return err
+						return err;
 					} else{
 						res.json(members);
 					};
-			})
-		}
+			});
+		};
 	});
-})
+});
 
 router.get('/details',function(req,res){
 	Case.find({})
@@ -114,11 +123,11 @@ router.get('/details',function(req,res){
 	.exec(function(err,old_case){
 		if (err) {
 			return err;
-		} else{
+		} else {
 			res.json(old_case);
 		};
-	})
-})
+	});
+});
 
 router.put('/close',function(req,res){
 	Case.findOneAndUpdate({
@@ -130,13 +139,12 @@ router.put('/close',function(req,res){
 	},function(err){
 		if (err) {
 			return err
-		}else{
-			res.json("case has been closed")
+		} else {
+			res.send(200);
 			socketios.broadcast("caseClose",{caseId :req.query.id, isOngoing : false});
-		}
-		res.send(200);
+		};
 	});
-})
+});
 
 router.get('/:caseId',function(req,res){
 	Case.findById({

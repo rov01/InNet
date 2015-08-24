@@ -33,11 +33,11 @@ router.get('/',function(req,res){
 	.exec(function(err, cars){
 		if (err) {
 			return err
-		}else{
+		} else {
 			res.json(cars);
-		}
+		};
 	});
-})
+});
 
 router.get('/onDuty',function(req,res){
 	Car.find({
@@ -46,12 +46,12 @@ router.get('/onDuty',function(req,res){
 	.sort({ code : 1 })
 	.exec(function(err,cars){
 		if (err) {
-			return err
-		}else{
-			res.json(cars)
-		}
-	})
-})
+			return err;
+		} else {
+			res.json(cars);
+		};
+	});
+});
 	
 router.get('/:branch',function(req,res){
 	Car.find({
@@ -61,28 +61,28 @@ router.get('/:branch',function(req,res){
 	.exec(function(err,cars){
 		if (err) {
 			return err
-		}else{
-			res.json(cars)
-		}
+		} else {
+			res.json(cars);
+		};
 	});
-})
+});
 
 router.put('/:id',function(req,res){
 	Car.findOneAndUpdate({
 		_id : req.params.id
 	},
 	{ 
-		$set :{
+		$set : {
 			isChecked : req.body.isChecked 
 		}
 	},
 	function(err){
 		if (err) {
 			return err
-		}else{
-			res.json({ result  : " modified"})
-		}
+		} else {
+			res.json(200,{ result  : " modified"});
+		};
 	});
-})
+});
 
 module.exports = router
