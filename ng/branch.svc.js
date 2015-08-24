@@ -28,6 +28,6 @@ angular.module('InNet')
 
 	this.updateDirector = function(data){
 		return $http.put('/api/branch?branch=' + data.branch, data)
-	}
+	};
 	
 }])

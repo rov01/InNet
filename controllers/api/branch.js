@@ -1,30 +1,7 @@
-var router   = require('express').Router();
-var Branch   = require('../../models/branch');
-var Member  = require('../../models/member');
-var socketios = require('../../socketios');
-var jwt  = require('jsonwebtoken');
-var config = require('../../config/config');
-
-
-router.use(function(req,res, next){
-	var token = req.body.token || req.query.token || req.headers['x-access-token'];
-
-	if (token) {
-		jwt.verify(token, config.secret, function(err,decoded){
-			if (err) {
-				return res.json({success:false, message: "Failed to authenticate token."})
-			}else{
-				next();
-			}
-		})
-	} else {
-		return res.status(403).send({
-			success : false,
-			message : "No token provided"
-		})
-	}
-})
-
+var router   	= require('express').Router(),
+	Branch   	= require('../../models/branch'),
+	Member  	= require('../../models/member'),
+	socketios 	= require('../../socketios');
 
 router.get('/', function(req,res){
  	Branch.find({ 
@@ -101,7 +78,7 @@ router.put('/:branch',function(req,res){
 		if (err) {
 			return err
 		}else{
-			res.json({ result  : " modified"})
+			res.send(200)
 		}
 	});
 })
@@ -120,7 +97,7 @@ router.put('/',function(req,res){
 		if (err) {
 			return err
 		}else{
-			res.json({ result  : "modified"})
+			res.send(200)
 			socketios.broadcast('onDutyUpdate',{ isUpated : true});
 		};
 	});

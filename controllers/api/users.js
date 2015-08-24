@@ -5,11 +5,11 @@
 * @Last Modified time: 2015-05-09 10:16:24
 */
 
-var User    = require('../../models/user');
-var router  = require('express').Router();
-var jwt 	= require('jsonwebtoken');
-var bcrypt  = require('bcrypt');
-var config  = require('../../config/config');
+var router  = require('express').Router(),
+	jwt 	= require('jsonwebtoken'),
+	bcrypt  = require('bcrypt'),
+	User    = require('../../models/user'),
+	config  = require('../../config/config');
 
 router.post('/',function(req,res,next){
 	User.findOne({
@@ -72,7 +72,8 @@ router.post('/authenticate', function(req,res){
 			bcrypt.compare(req.body.password, user.password, function(err,valid){
 				if (err) {
 					return  err
-				}else{
+					res.send(401);
+				} else {
 					if (valid) {
 						var token = jwt.sign(user,config.secret,{
 							expiresInMinutes:1440
@@ -83,7 +84,7 @@ router.post('/authenticate', function(req,res){
 							token :token 
 						});
 					}else{
-						res.json({success : false, message : "Authenticate failed ! Wrong password"})
+						res.json(401,{success : false, message : "Authenticate failed ! Wrong password"})
 					};
 				}
 			});
@@ -96,7 +97,7 @@ router.delete('/delete',function(req,res){
 		username : req.query.username
 	},function(err){
 		if (err) {return err}
-		res.json({ username : req.query.username})
+		res.json(200,{ username : req.query.username})
 	});
 });
 

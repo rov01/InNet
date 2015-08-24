@@ -1,13 +1,13 @@
-var _ 			= require('lodash');
-var config 		= require('./config/config');
-var socketio 	= require('socket.io');
-var User 		= require('./models/user');
-var Member 		= require('./models/member');
-var St 			= require('./models/strikeTeam');
-var jwt 		= require('jsonwebtoken'); 
-var socketioJwt = require('socketio-jwt');
-var sockets 	= []
-
+var _ 			= require('lodash'),
+	jwt 		= require('jsonwebtoken'),
+	socketio 	= require('socket.io'),
+	socketioJwt = require('socketio-jwt'),
+	User 		= require('./models/user'),
+	Member 		= require('./models/member'),
+	St 			= require('./models/strikeTeam'),
+	config 		= require('./config/config'),
+	sockets 	= [];
+	
 exports.connect = function(server){
 	var io = socketio.listen(server);
 

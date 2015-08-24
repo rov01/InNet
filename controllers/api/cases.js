@@ -5,34 +5,11 @@
 * @Last Modified time: 2015-05-14 16:10:28
 */
 
-var Case = require('../../models/case'); 
-var Car = require('../../models/car');
-var Member = require('../../models/member');
-var router = require('express').Router();
-var socketios = require('../../socketios');
-var jwt  = require('jsonwebtoken');
-var config = require('../../config/config');
-
-router.use(function(req,res, next){
-	var token = req.body.token || req.query.token || req.headers['x-access-token'];
-
-	if (token) {
-		jwt.verify(token, config.secret, function(err,decoded){
-			if (err) {
-				return res.json({success:false, message: "Failed to authenticate token."})
-			}else{
-				console.log(decoded.username + ' received token!');
-				req.decoded = decoded;
-				next();
-			}
-		})
-	} else {
-		return res.status(403).send({
-			success : false,
-			message : "No token provided"
-		})
-	}
-})
+var router 		= require('express').Router(),
+	Case 		= require('../../models/case'),
+	Car 		= require('../../models/car'),
+	Member  	= require('../../models/member'),
+	socketios 	= require('../../socketios');
 
 router.post('/',function(req,res){
 	var newCase = new Case({
@@ -53,17 +30,17 @@ router.post('/',function(req,res){
 	newCase.save(function(err, newCase){
 		if (err) {
 			return err;
-		}else{
+		} else {
 			Car.populate(newCase,
-				{path : "cars"},
+				{ path : "cars" },
 				function(err, newCase){
 					if (err) {
 						return err
-					} else{
+					} else {
 						socketios.broadcast('newCase', newCase);
 					};
 			});
-			res.json({msg : "new case created"});
+			res.send(201);
 		}
 	});
 })
@@ -77,7 +54,7 @@ router.get('/',function(req,res){
 	.exec(function(err, old_case){
 		if (err) {
 			return err
-		}else{
+		} else {
 			res.json(old_case);
 		}
 	});
@@ -94,7 +71,7 @@ router.get('/branch',function(req,res){
 		.exec(function(err,old_case){
 			res.json(old_case)
 		})
-	} else{
+	} else {
 		Case.find({
 			$and : [ { branches : { $in : [req.query.branch] } } , { isOngoing : true}, { corps : req.query.corps } ]
 		})
@@ -157,6 +134,7 @@ router.put('/close',function(req,res){
 			res.json("case has been closed")
 			socketios.broadcast("caseClose",{caseId :req.query.id, isOngoing : false});
 		}
+		res.send(200);
 	});
 })
 
@@ -181,7 +159,7 @@ router.put('/:caseId',function(req,res){
 	},
 	{ 
 		$set : {
-			caseId 		: req.body.caseId,
+			caseId 			: req.body.caseId,
 			address 		: req.body.address,
 			officerReceiver : req.body.officerReceiver, 
 			type    		: req.body.type,
@@ -194,8 +172,8 @@ router.put('/:caseId',function(req,res){
 			floor			: req.body.floor
 		}
 	},
-	function(err){
-		if (err) {return err};
+	function(err) {
+		if (err) { return err };
 		socketios.broadcast('caseModified',{ 
 		  	caseId 		: req.body.caseId,
 			address 		: req.body.address,
@@ -209,18 +187,18 @@ router.put('/:caseId',function(req,res){
 			env 			: req.body.env,
 			floor			: req.body.floor
 		});
-		res.json({msg : "case modified"});
+		res.send(200);
 	});
 });
 
 router.delete('/:caseId',function(req,res){
 	Case.remove({
 		_id : req.params.caseId
-	}, function(err){
+	}, function(err) {
 		if (err) {
 			return err
-		}else{
-			res.json("Case deleted")
+		} else {
+			res.send(204);
 		}
 	})
 });

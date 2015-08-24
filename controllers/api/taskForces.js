@@ -1,9 +1,9 @@
-var TaskForce = require('../../models/taskForce'); 
-var Member    = require('../../models/member');
-var router = require('express').Router();
+var router 		= require('express').Router(),
+	TaskForce 	= require('../../models/taskForce'),
+	Member    	= require('../../models/member');
 
-router
-	.post('/',function(req,res){
+
+router.post('/',function(req,res){
 
 		var new_taskForce = new TaskForce({
 
@@ -19,12 +19,12 @@ router
 
 		new_taskForce.save(function(err){
 			if (err) {return err};
-			res.json("Task Force created");
+			res.json(201,"Task Force created");
 
 		});
 	})
 
-	.get('/',function(req,res){
+router.get('/',function(req,res){
 
 		TaskForce.find()
 		.populate('members')
@@ -35,8 +35,7 @@ router
 		});
 	})
 
-router
-	.get('/:caseId',function(req,res){
+router.get('/:caseId',function(req,res){
 
 		TaskForce.find({
 			$and : [
@@ -52,7 +51,7 @@ router
 		
 	})
 
-	.get('/:caseId/:branchName',function(req,res){
+router.get('/:caseId/:branchName',function(req,res){
 		TaskForce.find({
 			$and : [
 				{ branches : req.params.branchName},
@@ -67,7 +66,7 @@ router
 		
 	})
 
-	.get('/:caseId/:branchName/count',function(req,res){
+router.get('/:caseId/:branchName/count',function(req,res){
 		TaskForce.find({
 			$and : [
 				{ branches : req.params.branchName},
@@ -83,7 +82,7 @@ router
 		
 	})
 
-	.get('/:caseId/:position/count',function(req,res){
+router.get('/:caseId/:position/count',function(req,res){
 		TaskForce.find({
 			$and : [
 				{ position : req.params.position},
@@ -99,7 +98,7 @@ router
 		
 	})
 
-	.get('/findById/:taskForceId',function(req,res){
+router.get('/findById/:taskForceId',function(req,res){
 		TaskForce.find({
 			_id : req.params.taskForceId
 		})
@@ -111,7 +110,7 @@ router
 		
 	})
 
-	.put('/findById/:taskForceId',function(req,res){
+router.put('/findById/:taskForceId',function(req,res){
 
 		TaskForce.update({
 			_id : req.params.taskForceId

@@ -5,10 +5,9 @@
 * @Last Modified time: 2015-05-09 20:52:26
 */
 
-var db = require('../config/database');
-var Schema   = db.Schema;
-
-var BranchSchema = new Schema({
+var db = require('../config/database'),
+	Schema   = db.Schema,
+	BranchSchema = new Schema({
 	id : { type : Number, required : true},
 	name  : { type : String, required : true },
 	corps : { type : String, required : true },

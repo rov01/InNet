@@ -5,15 +5,14 @@
 * @Last Modified time: 2015-04-21 19:31:58
 */
 
-
-var express = require('express');
-var path = require('path');
-var router = express.Router();
+var express = require('express'),
+	path 	= require('path'),
+	router 	= express.Router();
 
 router.use(express.static(__dirname + '/../public'));
 
 router.get('/',function(req,res){
-	res.sendfile('public/views/index.html')
-})
+	res.sendfile('public/views/index.html');
+});
 
 module.exports = router

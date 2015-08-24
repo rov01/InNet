@@ -1,28 +1,6 @@
-var Member = require('../../models/member'); 
-var router = require('express').Router();
-var socketios = require('../../socketios');
-var jwt  = require('jsonwebtoken');
-var config = require('../../config/config');
-
-router.use(function(req,res, next){
-	var token = req.body.token || req.query.token || req.headers['x-access-token'];
-	if (token) {
-		jwt.verify(token, config.secret, function(err,decoded){
-			if (err) {
-				return res.json({success:false, message: "Failed to authenticate token."})
-			}else{
-				console.log(decoded.username + ' received token!');
-				req.decoded = decoded;
-				next();
-			}
-		})
-	} else {
-		return res.status(403).send({
-			success : false,
-			message : "No token provided"
-		})
-	}
-})
+var router = require('express').Router(),
+	socketios = require('../../socketios'),
+	Member = require('../../models/member');
 
 router.post('/',function(req,res){
 	var member = new Member({
@@ -39,10 +17,13 @@ router.post('/',function(req,res){
 	});
 
 	member.save(function(err){
-		if (err) {return err};
-		res.json("New Member created");
+		if (err) {
+			return err
+		} else {
+			res.json(201,"New Member created");
+		}
 	});
-})
+});
 
 router.get('/',function(req,res){
 	Member.find()
@@ -51,7 +32,7 @@ router.get('/',function(req,res){
 		if (err) {return err};
 		res.json(members);
 	});
-})
+});
 	
 
 router.get('/onDuty',function(req,res){
@@ -64,7 +45,7 @@ router.get('/onDuty',function(req,res){
  		if (err) {throw err};
  		res.json(members);
  	});
- })
+ });
 	
 router.get('/:branchName', function(req,res){
  	Member.find({ 
@@ -72,20 +53,25 @@ router.get('/:branchName', function(req,res){
  	})
  	.sort({radioCode : 1 })
  	.exec(function( err, members){
- 		if (err) { throw err};
- 		res.json(members)
- 	})	 
- })
+ 		if (err) { 
+ 			return err
+ 		} else {
+ 			res.json(members);
+ 		};
+ 	}); 
+ });
 
 router.get('/findById/:memberId',function(req,res){
 	Member.find({
 		_id : req.params.memberId
 	},function(err,member){
-		if (err) {return err}
-
-		res.json(member)
+		if (err) {
+			return err
+		} else {
+			res.json(member)
+		};
 	});
-})
+});
 
 router.put('/findById/:memberId',function(req,res){
 
@@ -105,10 +91,13 @@ router.put('/findById/:memberId',function(req,res){
 		}
 	},
 	function(err){
-		if (err) {return err};
-		res.json("modified")
+		if (err) {
+			return err
+		} else {
+			res.send(204)
+		};
 	});
-})
+});
 
 router.put('/onDuty/findById',function(req,res){
 	Member.findOneAndUpdate({
@@ -119,14 +108,16 @@ router.put('/onDuty/findById',function(req,res){
 			onDuty  : req.body.onDuty
 		}
 	},function(err){
-		if (err) { return err } else{
-			res.json("update");
+		if (err) { 
+			return err 
+		} else {
+			res.send(200);
 		};
-	})
-})
+	});
+});
 
 router.put('/',function(req,res){
-	console.log(req.body)
+	
 	Member.findOneAndUpdate({
 		_id : req.query.id
 	},
@@ -138,18 +129,13 @@ router.put('/',function(req,res){
 		
 	},
 	function(err){
-		if (err) {return err};
-		res.json("modified")
+		if (err) {
+			return err
+		} else {
+			res.send(204);
+		};
 	});
-})
-
-router.delete('/:memberId',function(req,res){
-	Member.findOneAndRemove({
-		_id : req.params.memberId
-	},function(err){
-		if (err) { return err };
-	})
-})
+});
 
 router.put('/user',function(req,res){
 	Member.findOneAndUpdate({
@@ -161,6 +147,8 @@ router.put('/user',function(req,res){
 	},function(err){
 		if (err) {
 			return err
+		} else { 
+			res.send(204);
 		};
 	});
 });
@@ -175,15 +163,39 @@ router.put('/user/remove',function(req,res){
 		}
 	},function(err){
 		if (err) {
-			return err
+			return err;
+		} else {
+			res.send(200);
 		};
 	});
 });
 
 router.put('/total', function(req,res){
-	Member.update({},{isChecked : false},{multi : true }, function(err){
-		res.json("modified");
+	Member.update({},
+		{	
+			isChecked : false
+		},
+		{
+			multi : true 
+		}, function(err){
+			if (err) {
+				return err;
+			} else {
+				res.send(200);
+			};
 	});
-})
+});
+
+router.delete('/:memberId',function(req,res){
+	Member.findOneAndRemove({
+		_id : req.params.memberId
+	},function(err){
+		if (err) { 
+			return err 
+		} else {
+			res.send(204);
+		};
+	});
+});
 
 module.exports = router;

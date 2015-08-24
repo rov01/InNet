@@ -30,12 +30,12 @@ angular.module('InNet')
 		return $http.post('/api/cases', case_info);
 	};
 
-	this.update = function(updated_case){
-		return $http.put('/api/cases/' + updated_case.id , updated_case);
-	};
-
 	this.delete = function(caseId){
 		return $http.post('/api/cases/' + caseId);
+	};
+
+	this.update = function(updated_case){
+		return $http.put('/api/cases/' + updated_case.id , updated_case);
 	};
 
 	this.closeCase = function(data){

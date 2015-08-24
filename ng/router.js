@@ -171,7 +171,6 @@ angular.module('InNet')
                 };
             }; 
         }
-
     });
 
     $rootScope.$on('$stateChangeError',function(event){

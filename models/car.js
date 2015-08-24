@@ -1,7 +1,6 @@
-var db = require('../config/database');
-var Schema   = db.Schema;
-
-var CarSchema = new Schema({
+var db = require('../config/database'),
+	Schema   = db.Schema,
+	CarSchema = new Schema({
 	  type 			: { type : String, required : true  },
 	  id 			: { type : String, required : true  },
 	  corps 	 	: { type : String, required : true  },
