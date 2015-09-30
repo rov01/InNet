@@ -6,6 +6,8 @@
 angular.module('InNet')
 .controller('SummaryCtrl', ['$scope', 'StSvc', '$stateParams', '$interval', '$state', 'SocketSvc', 'CaseSvc',
 	function ($scope, StSvc, $stateParams, $interval, $state, SocketSvc, CaseSvc) {
+		$scope.isCollapsed = true ;
+		$scope.members = [];
 
 		SocketSvc.on('timerRunning',function(st){
 			for (var i = $scope.strikeTeams.length - 1; i >= 0; i--) {
@@ -54,8 +56,8 @@ angular.module('InNet')
 		});
 
 
-		var caseId = $stateParams.id;
-		CaseSvc.findById(caseId).success(function(_case){
+		var caseId = $stateParams.caseId;
+		CaseSvc.fetchById(caseId).success(function(_case){
 			_case.env == '住宅火警' ? $scope.apartment = true : $scope.apartment = false;
 			$scope.caseDetail = _case;
 			$scope.position = {
@@ -67,11 +69,15 @@ angular.module('InNet')
 		})
 
 		StSvc.fetchByCase(caseId).success(function(strikeTeams){
-			$scope.strikeTeams = strikeTeams;
-			$scope.strikeTeams.forEach(function(st){
-				st.limitTime = moment.duration(st.workingTime,'seconds');
-			});
-			$scope.deploys = initTable($scope.strikeTeams);
+			if (strikeTeams) {
+				$scope.strikeTeams = strikeTeams;
+				$scope.strikeTeams.forEach(function(st){
+					st.limitTime = moment.duration(st.workingTime,'seconds');
+				});
+				$scope.deploys = initTable($scope.strikeTeams);
+			} else {
+				return 
+			};
 		});
 
 
@@ -79,7 +85,7 @@ angular.module('InNet')
 		var initTable =  function(strikeTeams){
 		  	var deployArray = _.range(4).map(function () {
 		        return _.range(5).map(function () {
-		            return { totalMember : 0, stTotal : 0} ;
+		            return { totalMember : 0, stTotal : 0 , sts : [] } ;
 		        });
 		    });
 
@@ -92,6 +98,11 @@ angular.module('InNet')
 					$scope.apartment ? y = _.indexOf(strikeTeams[i].floors, strikeTeams[i].floor) : y = _.indexOf(strikeTeams[i].areas, strikeTeams[i].area)
 					deployArray[x][y].stTotal += 1;
 					deployArray[x][y].totalMember += strikeTeams[i].members.length;
+					var stInFo = {};
+					stInFo.id = strikeTeams[i].branch + strikeTeams[i].id
+					stInFo.number = strikeTeams[i].members.length;
+					stInFo.group = strikeTeams[i].group;
+					deployArray[x][y].sts.push(stInFo);
 				};
 			}
 			return deployArray

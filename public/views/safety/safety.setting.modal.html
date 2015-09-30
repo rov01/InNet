@@ -16,16 +16,22 @@
                      <select class="form-control" ng-model="strikeTeam.position" ng-options="position for position in strikeTeam.positions"></select>
                 </div>
             </div>
-             <div class="form-group">
+             <div class="form-group" ng-if="!apartment">
                 <label class="col-xs-4 control-label">作戰區域</label>
                 <div class="col-xs-8">
                      <select class="form-control" ng-model="strikeTeam.area" ng-options="area for area in strikeTeam.areas"></select>
                 </div>
             </div>
+            <div class="form-group" ng-if="apartment">
+                <label class="col-xs-4 control-label">作戰樓層</label>
+                <div class="col-xs-8">
+                     <select class="form-control" ng-model="strikeTeam.floor" ng-options="floor for floor in strikeTeam.floors"></select>
+                </div>
+            </div>
             <div class="form-group">
             	<label class="col-xs-4 control-label">作戰任務</label>
                 <div class="col-xs-8">
-                    <select class="form-control" ng-model="strikeTeam.mission" ng-options="mission for mission in strikeTeam.missions"></select>
+                    <select class="form-control" ng-model="strikeTeam.group" ng-options="group for group in strikeTeam.groups"></select>
                 </div>
             </div>
         </form>
@@ -36,22 +42,22 @@
                         <h3> 選擇分隊 </h3>
                     </div>
                     <div class="list-group">
-                        <a class="list-group-item" ng-repeat="branch in dispatch" ng-click="chooseBranch($index)">
+                        <a class="list-group-item" ng-repeat="branch in dispatch" ng-click="chooseBranch(branch.name)">
                             <strong>{{branch.name}}</strong>
                         </a>
                     </div>
                 </div>
             </div>
             <div class="col-md-8">
-                <table class="table table-striped" ng-if="members">
+                <table class="table table-striped" ng-show="members">
                     <thead>
-                        <th>姓名</th>
-                        <th>職缺</th>
-                        <th>分工</th>
-                        <th></th>
+                        <th class="text-center">姓名</th>
+                        <th class="text-center">職缺</th>
+                        <th class="text-center">分工</th>
+                        <th class="text-center"></th>
                     </thead>
                     <tobody>
-                        <tr ng-repeat="member in members">
+                        <tr ng-repeat="member in members | filterBy: ['branch']: currentBranch" class="text-center">
                             <td>{{member.name}}</td>
                             <td>{{member.title}}</td>
                             <td><select class="form-control" ng-model="member.mission" ng-options="mission for mission in member.missions"></select></td>

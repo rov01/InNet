@@ -41,19 +41,19 @@
             <div class="form-group">
             	<label class="col-xs-4 control-label">作戰任務</label>
                 <div class="col-xs-8">
-                    <select class="form-control" ng-model="strikeTeam.mission" ng-options="mission for mission in strikeTeam.missions"></select>
+                    <select class="form-control" ng-model="strikeTeam.group" ng-options="group for group in strikeTeam.groups"></select>
                 </div>
             </div>
         </form>
         <table class="table table-striped">
             <thead>
-                 <th>姓名</th>
-                 <th>工作時間</th>
-                 <th>分工</th>
-                 <th>編組</th>
+                 <th class="text-center">姓名</th>
+                 <th class="text-center">工作時間</th>
+                 <th class="text-center">分工</th>
+                 <th class="text-center">編組</th>
              </thead> 
              <tbody>
-                 <tr ng-repeat="member in details.members">
+                 <tr ng-repeat="member in details.members" class="text-center">
                      <td>{{::member.name}}</td>
                      <td>{{::member.limitTime.minutes()}} 分鐘</td>
                      <td>

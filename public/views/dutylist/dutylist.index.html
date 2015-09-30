@@ -6,51 +6,49 @@
     </div>
 </div>
 <div class="wrapper wrapper-content">
-    <div class="panel ui-tab">
-        <div class="panel-heading">
-            <div class="row">
-                <div class="col-lg-8">
-                    <div class="panel-title">
-                        <h2>{{branch.name}} 總人數: {{branch.members.length}} 上班人數 : {{onDutyTotal.length}} 今日主管 : {{branch.director}} </h2>
-                    </div>
-                </div>
-                <div class="col-lg-4">
-                    <a class="btn btn-success btn-block" href="/#/dutyDesk/dutylist/{{branch.name}}/edit">
-                        <span>編輯</span>
-                    </a>
-                </div>
-            </div> 
+    <div class="ibox">
+        <div class="ibox-title">
+            <h5><strong>{{branch.name}}</strong></h5>
+            <div class="pull-right">
+                <a href="#/dutyDesk/dutylist/{{branch.name}}/edit" class="btn btn-primary btn-xs">編輯</a>
+            </div>    
         </div>
-        <div class="panel-body">
-            <div class="list-group">
+        <div class="ibox-content">
+            <div class="row">
+                <div class="col-md-8">
+                    <p><strong>總人數 :</strong> {{branch.members.length}} <strong> 上班人數 :</strong>  {{onDutyTotal.length}} </p>
+                    <p><strong>今日主管 :</strong> {{branch.director}} <strong>今日安全官 : </strong> {{branch.safetyManager}} </p> 
+                </div>              
+            </div>
+            <div class="project-list">
                 <div class="table-responsive">
-                    <table class="table">
+                    <table class="table table-hover">
                         <thead>
                             <tr>
-                                <th></th>
-                                <th>姓名</th>
-                                <th>職稱</th>
-                                <th>任務</th>
-                                <th>狀態</th>
+                                <th class="text-center">派遣狀態</th> 
+                                <th class="text-center">代號</th>
+                                <th class="text-center">姓名</th>
+                                <th class="text-center">今日組別</th>
+                                <th class="text-center">今日任務</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            <tr ng-repeat="member in branch.members" ng-class="{ warning : member.onDuty} ">
-                                <td>{{$index + 1 }}</td>
-                                <td>{{member.name}}</td>
-                                <td>{{member.title}}</td>
+                        <tbody >
+                            <tr ng-repeat="member in branch.members" class="text-center">
                                 <td>
-                                    <p ng-if="member.onDuty">{{member.mission}}</p>
+                                    <span class="label label-primary" ng-if="member.onDuty">可出勤</span>
+                                    <span class="label label-success" ng-if="!member.onDuty">不可出勤</span>
                                 </td>
+                                <td>{{member.radioCode}}</td>
+                                <td>{{member.name}}</td>
+                                <td><p class="project_detail" ng-if="member.onDuty">{{member.group}} {{member.groupId}}</p>
                                 <td>
-                                    <p ng-if="member.onDuty">可出勤</p>
-                                    <p ng-if="!member.onDuty">不可出勤</p>
+                                    <p class="project_detail" ng-if="member.onDuty">{{member.mission}}</p>
                                 </td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
-            </div> 
+            </div>
         </div>
     </div>
 </div>

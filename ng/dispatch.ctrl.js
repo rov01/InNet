@@ -9,12 +9,12 @@ angular.module('InNet')
 
 	CaseSvc.fetch(UserSvc.userCorps()).success(function(cases){
 		$scope.cases = cases;
-		CaseSvc.findById($scope.cases[$stateParams.caseId]._id).success(function(_case){
+		CaseSvc.fetchById($scope.cases[$stateParams.caseId]._id).success(function(_case){
 				$scope.caseDetails = _case
 		})
 	})
 
-	BranchSvc.fetch(UserSvc.userCorps()).success(function(branches){
+	BranchSvc.fetchByCorps(UserSvc.userCorps()).success(function(branches){
 	    $scope.branchList = branches;
 
 	 })

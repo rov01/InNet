@@ -8,19 +8,28 @@
 var db = require('../config/database'),
 	Schema = db.Schema,
 	CaseSchema = new Schema({
-		caseId   		: { type 	: Number,  	required : true, default : 0 },
+		caseId   		: { type 	: Number,   default : 0 },
 		address   		: { type 	: String,  	required : true },
 		officerReceiver : { type 	: String,	required : true },
 		type      		: { type 	: String, 	required : true, default : "火警" },
+		types 			: [ { type    : String} ],
 		phone     		: { type 	: String },
-		branches  		: [ { type 	: String, 	default : "第一救災救護大隊"} ],
+		branches  		: [ { type 	: String} ],
 		branchIds 		: [ { type 	: Schema.Types.ObjectId, ref: 'Branch'}],
 		cars      		: [ { type 	: Schema.Types.ObjectId, ref: 'Car'} ],
+		ntf 			: { type : Schema.Types.ObjectId, ref: 'Notification'},
 		isOngoing 		: { type 	: Boolean, 	default : true },
-		date 	  		: { type 	: Date,		required : true, default : Date.now},
+		acceptances 	: [ { type : String }],
 		corps 	  		: { type 	: String },
 		floor			: { type 	: Number, default : 0 },
-		env 			: { type 	: String, default : "住宅火警" }
+		env 			: { type 	: String, default : "住宅火警" },
+		envs 			: [ { type : String } ],
+		battleRadiuss   : [ { type : String }],
+		createAt 	  	: { type 	: String },
+		lastUpdate		: { type 	: String },
+		updateCount     : { type 	: Number },
+		endAt 			: { type 	: String },
+		location 		: { type    : String }
 	})
 
 module.exports = db.model('Case',CaseSchema)

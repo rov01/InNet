@@ -24,7 +24,7 @@ angular.module('InNet')
 		corpss 	 	: ["第一救災救護大隊","第三救災救護大隊"],
 	};
 
-	BranchSvc.fetch(UserSvc.userCorps()).success(function(branches){
+	BranchSvc.fetchByCorps(UserSvc.userCorps()).success(function(branches){
 		$scope.branches = branches; 
 		if (!$scope.isNew) {
 			var branchArry = [];

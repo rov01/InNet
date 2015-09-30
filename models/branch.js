@@ -6,16 +6,17 @@
 */
 
 var db = require('../config/database'),
-	Schema   = db.Schema,
-	BranchSchema = new Schema({
-	id : { type : Number, required : true},
-	name  : { type : String, required : true },
-	corps : { type : String, required : true },
-	director : { type: String},
-	directors : [ { type : String } ],
-	members : [{  type: Schema.Types.ObjectId , ref: 'Member'}],
-	dispatchNum : { type : Number },
-	safetyManager : { type : Schema.Types.ObjectId, ref: 'Member'}
+Schema   = db.Schema,
+BranchSchema = new Schema({
+	id 				: { type : Number, required : true },
+	name  			: { type : String, required : true },
+	corps 			: { type : String, required : true },
+	director 		: { type : String },
+	directors 		: [ { type : String } ],
+	members 		: [ {  type: Schema.Types.ObjectId , ref: 'Member'}],
+	dispatchNum 	: { type : Number },
+	safetyManager 	: { type : String },
+	cases 			: [ { type : Schema.Types.ObjectId, ref : 'Case'} ]
 })
 
 module.exports = db.model('Branch',BranchSchema)

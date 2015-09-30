@@ -6,18 +6,18 @@
 */
 
 var db = require('../config/database'),
-	Schema = db.Schema,
-	UserSchema = Schema({
-		username 	: { type : String, 	required : true },
-		account  	: { type : String, 	required : true },
-		password 	: { type : String, 	required : true },
-		branch	 	: { type : String, 	required : true },
-		radioCode 	: { type : String },
-		corps 		: { type : String, 	required : true, default : "第一救災救護大隊" },
-		role 		: { type : String, 	required : true, default : "user" },
-		online 		: { type : Boolean, required : true, default : false },
-		accessLevel : { type : Number, 	required : true, default : 1 },
-		caseId 		: { type : String },
-	})
+Schema = db.Schema,
+UserSchema = Schema({
+	username 	: { type : String, 	required : true },
+	account  	: { type : String, 	required : true },
+	password 	: { type : String, 	required : true },
+	branch	 	: { type : String, 	required : true },
+	radioCode 	: { type : String },
+	corps 		: { type : String, 	required : true, default : "第一救災救護大隊" },
+	role 		: { type : String, 	required : true, default : "user" },
+	online 		: { type : Boolean, required : true, default : false },
+	accessLevel : { type : Number, 	required : true, default : 1 },
+	caseId 		: { type : String },
+})
 
 module.exports = db.model('User',UserSchema);

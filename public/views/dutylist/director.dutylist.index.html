@@ -28,14 +28,14 @@
                         <thead>
                             <tr>
                                 <th></th>
-                                <th>姓名</th>
-                                <th>職稱</th>
-                                <th>任務</th>
-                                <th>狀態</th>
+                                <th class="text-center">姓名</th>
+                                <th class="text-center">職稱</th>
+                                <th class="text-center">任務</th>
+                                <th class="text-center">狀態</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr ng-repeat="member in branch.members" ng-class="{ warning : member.onDuty} ">
+                            <tr ng-repeat="member in branch.members" ng-class="{ warning : member.onDuty}" class="text-center">
                                 <td>{{$index + 1 }}</td>
                                 <td>{{member.name}}</td>
                                 <td>{{member.title}}</td>

@@ -24,7 +24,7 @@
 			<div class="panel panel-default"  ng-controller="TimerCtrl">
 				<div class="panel-heading clearfix">
 					<h2 class="panel-title pull-left">
-						組別 {{::strikeTeam.branch}} {{::strikeTeam.id}}
+						<strong>{{::strikeTeam.branch}} {{::strikeTeam.id}}  {{::strikeTeam.group}} </strong>	
 					</h2>
 					<div class="btn btn-group pull-right">
 						<div class="btn btn-success btn-sm" ng-click="startTimer(strikeTeam, $index)" >
@@ -44,7 +44,7 @@
 				<div class="list-group">
 					<div class="list-group-item">
 						<timer countdown="strikeTeam.workingTime" interval="1000" autostart='false' st="strikeTeam">
-							<p list-group-item-text>剩餘時間 : {{minutes}} 分 {{seconds}} 秒 <div ng-if="progressBar>0"> 進度 ( {{progressBar}}% ) </div></p>
+							<p list-group-item-text><strong>剩餘時間 : {{minutes}} 分 {{seconds}} 秒</strong><div ng-if="progressBar>0"> 進度 ( {{progressBar}}% ) </div></p>
 							<div class="progress progress-striped active "style="height: 30px;">
 								<div class="progress-bar {{progressState}} " style="width: {{progressBar}}%;"></div>
 							</div>
@@ -58,7 +58,7 @@
 								<p class="list-group-item-text" ng-if="apartment">負責樓層 : {{strikeTeam.floor}}</p>
 							</div>
 							<div class="col-sm-6">
-								<p class="list-group-item-text">任務 : {{strikeTeam.mission}}</p>
+								<p class="list-group-item-text">組別 : {{strikeTeam.group}}</p>
 							</div>
 						</div>
 					</div>
@@ -76,7 +76,7 @@
 					</div>	
 				</div>
 				<div class="panel-footer">
-					<div class="btn btn-block btn-danger" ng-click="dismiss(strikeTeam, $index)">解散</div>
+					<div class="btn btn-block btn-danger" ng-click="dismiss(strikeTeam, $index)" ng-if="!timerRunning">解散</div>
 				</div>
 			</div>
 		</div>

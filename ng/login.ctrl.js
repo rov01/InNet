@@ -24,7 +24,14 @@ angular.module('InNet')
 		})
 		.then(function(){
 			if (jwtHelper.decodeToken(token).role == "admin") {
-				$state.go('dutyDesk.dashboard')
+
+				var userBranch = jwtHelper.decodeToken(token).branch;
+				if (userBranch.slice(userBranch.length-2 ,userBranch.length) == "大隊") {
+					$state.go('dutyDesk.corps')
+				} else{
+					$state.go('dutyDesk.branch')
+				};
+
 			}else{
 				$state.go('director.safety.index')
 			}

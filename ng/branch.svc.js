@@ -3,10 +3,13 @@
 *
 * Description
 */
+
+'use strict';
+
 angular.module('InNet')
 .service('BranchSvc', [ '$http', function ($http) {
 
-	this.fetch = function(corps){
+	this.fetchByCorps = function(corps){
 		return $http.get('/api/branch?corps=' + corps);
 	};
 
@@ -22,11 +25,15 @@ angular.module('InNet')
 		return $http.get('/api/branch/' + id);
 	};
 
+	this.fetchOnDutyBranches = function(branches){
+		return $http.post('/api/branch/onduty',branches)
+	}
+
 	this.update = function(data){
 		return $http.put('/api/branch/' + data.branch , data);
 	};
 
-	this.updateDirector = function(data){
+	this.updateMission = function(data){
 		return $http.put('/api/branch?branch=' + data.branch, data)
 	};
 	

@@ -9,56 +9,77 @@ var router 		= require('express').Router(),
 	Case 		= require('../../models/case'),
 	Car 		= require('../../models/car'),
 	Member  	= require('../../models/member'),
+	Ntf 		= require('../../models/notification'),
 	socketios 	= require('../../socketios');
 
 router.post('/',function(req,res){
-	var newCase = new Case({
-		caseId 			: req.body.caseId,
-		address 		: req.body.address,
-		officerReceiver : req.body.officerReceiver, 
-		type    		: req.body.type,
-		phone   		: req.body.phone,
-		branches 		: req.body.branches,
-		branchIds		: req.body.branchIds,
-		cars 			: req.body.cars,
-		isOngoing 		: req.body.isOngoing,
-		corps 			: req.body.corps,
-		env 			: req.body.env,
-		floor			: req.body.floor
-	});
+	console.log(req.body)
+	Case.find({})
+	.count()
+	.exec(function(err,total){
+		var newCase = new Case({
+			caseId 			: total + 1 ,
+			address 		: req.body.address,
+			officerReceiver : req.body.officerReceiver, 
+			type    		: req.body.type,
+			types			: req.body.types,
+			phone   		: req.body.phone,
+			branches 		: req.body.branches,
+			branchIds		: req.body.branchIds,
+			corps 			: req.body.corps,
+			cars 			: req.body.cars,
+			env 			: req.body.env,
+			envs 			: req.body.envs,
+			floor			: req.body.floor,
+			createAt 		: req.body.createAt,
+			lastUpdate		: req.body.lastUpdate,
+			ntf 			: req.body.ntf, 
+			location 		: JSON.stringify(req.body.location),
+			battleRadiuss   : req.body.battleRadiuss
+		});
 
-	newCase.save(function(err, newCase){
-		if (err) {
-			return err;
-		} else {
-			Car.populate(newCase,
-				{ 
-					path : "cars" 
-				},function(err, newCase){
-					if (err) {
-						return err;
-					} else {
-						socketios.broadcast('newCase', newCase);
-					};
-			});
-			res.send(201);
-		};
-	});
+		newCase.save(function(err, newCase){
+			if (err) {
+				return err;
+			} else {
+				Car.populate(newCase,
+					{ 
+						path : "cars" 
+					},function(err, newCase){
+						if (err) {
+							return err;
+						} else {
+							socketios.broadcast('newCase', newCase);
+						};
+				});
+				res.send(201);
+			};
+		});
+	})
 });
 
 router.get('/',function(req,res){
-	Case.find({
-		corps : req.query.corps 
+
+	var p = Number(req.query.page),
+		itemsPerPage = Number(req.query.ipp);
+
+	Case.count({
+		corps : req.query.corps
+	},function(err,totalCases){
+		Case.find({
+			corps : req.query.corps 
+		})
+		.sort({ 'caseId' : -1 })
+		.where('caseId').gt( totalCases + 1  - (p * itemsPerPage  + 1) ).lt(   totalCases - ( (p - 1) * itemsPerPage ) + 1 )
+		.limit(100)
+		.exec(function(err, cases){
+			if (err) {
+				return err;
+			} else {
+				return res.json({cases: cases, totalCases : totalCases})
+			};
+		});
 	})
-	.sort({ date : -1 })
-	.limit(10)
-	.exec(function(err, old_case){
-		if (err) {
-			return err;
-		} else {
-			res.json(old_case);
-		};
-	});
 });
 
 router.get('/branch',function(req,res){
@@ -66,9 +87,10 @@ router.get('/branch',function(req,res){
 		Case.find({
 			$and : [ { isOngoing : true} , { corps : req.query.corps } ]
 		})
-		.sort('-id')
+		.sort({'caseId':-1})
 		.limit(3)
 		.populate('cars')
+		.populate('ntf')
 		.exec(function(err,old_case){
 			if (err) {
 				return err
@@ -80,9 +102,10 @@ router.get('/branch',function(req,res){
 		Case.find({
 			$and : [ { branches : { $in : [req.query.branch] } } , { isOngoing : true}, { corps : req.query.corps } ]
 		})
-		.sort('-id')
+		.sort({'caseId':-1})
 		.limit(3)
 		.populate('cars')
+		.populate('ntf')
 		.exec(function(err,old_case){
 			if (err) {
 				return err
@@ -99,12 +122,13 @@ router.get('/details/:caseId',function(req,res){
 	})
 	.populate('cars')
 	.populate('branchIds')
-	.exec(function(err,old_case){
+	.populate('ntf')
+	.exec(function(err,_case){
 		if (err) {
 			return err
 		} else {
 			Member
-			.populate(old_case,
+			.populate(_case,
 				{path : "branchIds.members", match : {onDuty : true }},
 				function(err, members){
 					if (err) {
@@ -130,18 +154,20 @@ router.get('/details',function(req,res){
 });
 
 router.put('/close',function(req,res){
+	console.log(req.body);
 	Case.findOneAndUpdate({
 		_id : req.query.id
 	},{
 		$set : {
-			isOngoing : req.body.isOngoing
+			isOngoing 	: false,
+			endAt 	  	: req.body.endAt,
+			lastUpdate 	: req.body.endAt 
 		}
 	},function(err){
 		if (err) {
 			return err
 		} else {
 			res.send(200);
-			socketios.broadcast("caseClose",{caseId :req.query.id, isOngoing : false});
 		};
 	});
 });
@@ -150,12 +176,14 @@ router.get('/:caseId',function(req,res){
 	Case.findById({
 		_id : req.params.caseId
 	})
-	.populate('cars')
-	.exec(function(err,old_case){
+	.populate('cars','radioCode')
+	.populate('ntf')
+	.exec(function(err, _case){
 		if (err) {
 			return err
 		}else{
-			res.json(old_case)	
+			
+			return res.json(_case)	
 		}
 	});
 })
@@ -167,34 +195,26 @@ router.put('/:caseId',function(req,res){
 	},
 	{ 
 		$set : {
-			caseId 			: req.body.caseId,
 			address 		: req.body.address,
 			officerReceiver : req.body.officerReceiver, 
 			type    		: req.body.type,
+			types			: req.body.types,
 			phone   		: req.body.phone,
 			branches 		: req.body.branches,
 			branchIds		: req.body.branchIds,
-			cars 			: req.body.cars,
 			isOngoing 		: req.body.isOngoing,
+			corps 			: req.body.corps,
+			cars 			: req.body.cars,
 			env 			: req.body.env,
-			floor			: req.body.floor
-		}
+			envs 			: req.body.envs,
+			floor			: req.body.floor,
+			lastUpdate		: req.body.lastUpdate,
+			ntf 			: req.body.ntf
+		},
+		$inc  : { updateCount : 1 }	
 	},
 	function(err) {
 		if (err) { return err };
-		socketios.broadcast('caseModified',{ 
-		  	caseId 		: req.body.caseId,
-			address 		: req.body.address,
-			officerReceiver : req.body.officerReceiver, 
-			type    		: req.body.type,
-			phone   		: req.body.phone,
-			branches 		: req.body.branches,
-			branchIds		: req.body.branchIds,
-			cars 			: req.body.cars,
-			isOngoing 		: req.body.isOngoing,
-			env 			: req.body.env,
-			floor			: req.body.floor
-		});
 		res.send(200);
 	});
 });

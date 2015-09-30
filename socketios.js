@@ -17,13 +17,9 @@ exports.connect = function(server){
 	}));
 
 	io.on('connection',function(socket){
-
-		sockets.push(socket);
-	
+		sockets.push(socket);	
 		socket.on('disconnect', function(){
-			
 			_.remove(sockets,socket);
-
 			User.findOneAndUpdate({
 				username : socket.decoded_token.username
 			},{
@@ -89,6 +85,7 @@ exports.connect = function(server){
 		});
 
 		socket.on('stateUpdate', function(data){
+			socket.broadcast.emit('progressUpdate', data);
 			St.findOneAndUpdate({
 				_id : data.id
 			},{
@@ -100,12 +97,13 @@ exports.connect = function(server){
 				if (err) {
 					return err
 				} else{
-					socket.broadcast.emit('progressUpdate', data);
+					return 
 				};
 			})
 		});
 
 		socket.on('timer',function(st){
+			socket.broadcast.emit('timerRunning', st);
 			St.findOneAndUpdate(function(){
 				_id : st.stId
 			},{
@@ -116,10 +114,10 @@ exports.connect = function(server){
 				if (err) {
 					return err
 				} else{
-					socket.broadcast.emit('timerRunning', st);
+					return 	
 				};
 			})
-		})
+		});
 
 		socket.on('createStrikeTeam', function(strikeTeam){
 			var newSt = new St({
@@ -129,22 +127,21 @@ exports.connect = function(server){
 				director 		: strikeTeam.director, 
 				position    	: strikeTeam.position, 
 				positions 		: strikeTeam.positions, 
-				mission 		: strikeTeam.mission, 
-				missions		: strikeTeam.missions,
+				group 			: strikeTeam.group, 
+				groups			: strikeTeam.groups,
 				area 			: strikeTeam.area,
 				areas 			: strikeTeam.areas, 
 				floor 			: strikeTeam.floor,
 				floors 			: strikeTeam.floors,
-				members 		: strikeTeam.members, 
-				isDismissed		: strikeTeam.isDismissed, 
+				members 		: strikeTeam.memberIds, 
 				workingTime 	: strikeTeam.workingTime,
-				creator 		: strikeTeam.creator 
+				creator 		: strikeTeam.creator
 			});
 
 			newSt.save(function(err,st){
 				if (err) {return err};
 				Member.populate(st,
-					{path : "members", match : {onDuty : true }},
+					{path : "members", match : { onDuty : true }},
 					function(err, st){
 						if (err) {
 							return err
@@ -153,7 +150,75 @@ exports.connect = function(server){
 						};
 				})
 			});
+
+			strikeTeam.members.forEach(function(member){
+				Member.findOneAndUpdate({
+					_id : member._id
+				},{
+					$set : {
+						isChecked : member.isChecked,
+						group 	  : member.group
+					}
+				},function(err){
+					if (err) {return err};
+				});
+			});
 		})
+
+		socket.on('dismissStrikeTeam',function(strikeTeam){
+			socket.broadcast.emit('dismiss',{stId :strikeTeam.id});
+			St.findOneAndUpdate({
+				_id : strikeTeam.id 
+			},{
+				isDismissed : true 
+			},function(err){
+				if (err) { return err };
+			});
+
+			strikeTeam.members.forEach(function(member){
+				Member.findOneAndUpdate({
+					_id : member._id
+				},{
+					isChecked : false
+				},function(err){
+					if (err) { return err };
+				});
+			});
+		});
+
+		socket.on('updateStrikeTeam',function(st){
+			
+			socket.broadcast.emit('updateSt',st);
+			St.findOneAndUpdate({
+				_id : st.id
+			},{
+				$set : {
+					position : st.position,
+					area 	 : st.area, 
+					floor 	 : st.floor,
+					group 	 : st.group,
+					members  : st.memberIds
+				}
+			},function(err){
+				if (err) { return err }
+				return
+			});
+
+			st.members.forEach(function(member){
+				Member.findOneAndUpdate({
+					_id : member._id
+				},{
+					$set : {
+						isChecked : true,
+						mission : member.mission,
+						group : st.mission  
+					}
+				},function(err){
+					if (err) { return err };
+					return 
+				})
+			});
+		});
 	});
 }
 
@@ -161,4 +226,4 @@ exports.broadcast = function( topic , data){
 	sockets.forEach(function(socket){
 		socket.emit(topic, data);
 	})
-}
+};

@@ -4,22 +4,22 @@
 * Description
 */
 angular.module('InNet')
-.controller('SafetyManageCtrl', ['$scope','$stateParams', '$modal', 'StSvc', '$state', 'MemberSvc','$log', 'UserSvc', 'BranchSvc', 'SocketSvc', 'CaseSvc',
-	function ($scope, $stateParams, $modal, StSvc, $state, MemberSvc, $log, UserSvc, BranchSvc, SocketSvc, CaseSvc) {
+.controller('SafetyManageCtrl', ['$scope','$stateParams', '$modal', 'StSvc', '$state', 'MemberSvc','$log', 'UserSvc', 'BranchSvc', 'SocketSvc', 'CaseSvc', 'StMissionFac',
+	function ($scope, $stateParams, $modal, StSvc, $state, MemberSvc, $log, UserSvc, BranchSvc, SocketSvc, CaseSvc, StMissionFac) {
 
-		var BRANCH = UserSvc.userBranch();
-		var caseDetail = null;
+		var BRANCH 		= UserSvc.userBranch();
+		var caseDetail 	= null;
 
-		$scope.quickStart =  false;
-		$scope.apartment = true; 
-		$scope.ACCESSLEVEL = UserSvc.accessLevel();
+		$scope.quickStart 	= false;
+		$scope.apartment 	= true; 
+		$scope.ACCESSLEVEL 	= UserSvc.accessLevel();
 
 		$scope.branchOptions = {
 			branch : BRANCH,
 			branches : []
 		};
 
-		CaseSvc.findById($stateParams.id).success(function(_case){
+		CaseSvc.fetchById($stateParams.caseId).success(function(_case){
 			caseDetail = _case;
 			_case.env == '住宅火警'? $scope.apartment = true : $scope.apartment = false; 
 			$scope.branchOptions.branches = _case.branches
@@ -30,11 +30,11 @@ angular.module('InNet')
 			$scope.details = details;
 		}).then(function(){
 			if ($scope.ACCESSLEVEL > 1 ) {
-				StSvc.fetchByCase($stateParams.id).success(function(sts){
+				StSvc.fetchByCase($stateParams.caseId).success(function(sts){
 					$scope.strikeTeams = sts; 
 				})
 			} else {
-				StSvc.fetch($stateParams.id,BRANCH).success(function(sts){
+				StSvc.fetch($stateParams.caseId,BRANCH).success(function(sts){
 				$scope.strikeTeams = sts;
 					if ($scope.details.members.length < 8 && _.isEmpty($scope.strikeTeams)) { $scope.quickStart = true  }; 
 				}); 
@@ -42,10 +42,10 @@ angular.module('InNet')
 		});
 
 		SocketSvc.on('newSt', function(st){
-			if ($scope.ACCESSLEVEL > 1 && angular.equals($stateParams.id,st.caseId) ) {
+			if ($scope.ACCESSLEVEL > 1 && angular.equals($stateParams.caseId,st.caseId) ) {
 					$scope.strikeTeams.push(st);
 			} else {
-				if (angular.equals(BRANCH,st.branch) && angular.equals($stateParams.id,st.caseId) ) {
+				if (angular.equals(BRANCH,st.branch) && angular.equals($stateParams.caseId,st.caseId) ) {
 					$scope.strikeTeams.push(st);
 				};
 			};
@@ -55,9 +55,10 @@ angular.module('InNet')
 			var members = angular.copy(data.members);
 			for (var i = $scope.strikeTeams.length - 1; i >= 0; i--) {
 				if(angular.equals($scope.strikeTeams[i]._id,data.id)){
-					$scope.strikeTeams[i].position = data.position;
-					$scope.strikeTeams[i].area = data.area;
-					$scope.strikeTeams[i].members.push.apply($scope.strikeTeams[i].members, members);
+					$scope.strikeTeams[i].position 	= data.position;
+					$scope.strikeTeams[i].area 		= data.area;
+					$scope.strikeTeams[i].floor 	= data.floor;
+					$scope.strikeTeams[i].mission 	= data.mission;
 				};
 			};
 		})
@@ -100,36 +101,20 @@ angular.module('InNet')
 	            resolve: {
 	                strikeTeam : function(){
 	                    return strikeTeam;
+	                },
+	                caseDetail : function(){
+	                	return caseDetail;
 	                }
 	            }
 	        });
-	        modalInstance.result.then(function (updatedSt) {
-	        	for (var i = $scope.strikeTeams.length - 1; i >= 0; i--) {
-					if(angular.equals($scope.strikeTeams[i]._id,updatedSt.id)){
-						$scope.strikeTeams[i].position = updatedSt.position;
-						$scope.strikeTeams[i].area = updatedSt.area;
-						$scope.strikeTeams[i].members.push.apply($scope.strikeTeams[i].members, updatedSt.members);
-					};
-				};
-
-		    }, function () {
-		      $log.info('Modal dismissed at: ' + new Date());
-		    });
 	    };
 
 		$scope.dismiss = function(strikeTeam , id){
-			
-	       	StSvc.dismissSt({
-	       		id : strikeTeam._id
-	       	}).success(function(){
-	       		for (var i = strikeTeam.members.length - 1; i >= 0; i--) {
-		            MemberSvc.updateIsChecked({
-		                memberId  : strikeTeam.members[i]._id,
-		                mission	  : strikeTeam.members[i].mission,
-		                isChecked : false
-		            })
-		        };	
-	       	})
+
+			SocketSvc.emit("dismissStrikeTeam",{
+				id : strikeTeam._id,
+				members : strikeTeam.members 
+			});
 	       	$scope.strikeTeams.splice(id,1);
 		};
 
@@ -144,30 +129,16 @@ angular.module('InNet')
 				}
 			});
 
-		 	var strikeTeam = {
-	      		id 		    : 1, 
-	      		caseId      : $stateParams.id,
-	      		branch      : $scope.details.name,
-	      		director    : $scope.details.director,
-	      		position    : "第一面",
-	      		positions   : ["第一面","第二面","第三面","第四面"],
-	      		mission     : "滅火小組",
-	      		missions    : ["滅火小組","破壞小組","搜救小組"],
-	      		area 		: "第一區",
-	      		areas 		: ["第一區","第二區","第三區","第四區","第五區"],
-	      		members     : members,
-	      		isDismissed : false,
-	      		workingTime : _.min(members, function(member){ return member.workingTime; }).workingTime,
-	      		creator 	: UserSvc.currentUser() 	
-	      	};
-
-	      	for (var i = members.length - 1; i >= 0; i--) {
-    			MemberSvc.updateIsChecked({
-    				memberId  : members[i]._id,
-    				isChecked : true,
-    				mission	  : members[i].mission
-    			});		
-		    };
+			var strikeTeam = {
+				position  : StMissionFac.position().defaultPos,
+				positions : StMissionFac.position().poss,
+				group     : StMissionFac.groups().branch[1],
+				groups    : StMissionFac.groups().branch,
+				area 	  : StMissionFac.area().defaultArea,
+				areas 	  : StMissionFac.area().areas,
+				floor 	  : 1, 
+				floors    : [1,2,3,4,5]
+			};
 
 	      	SocketSvc.emit("createStrikeTeam", strikeTeam);
 		};

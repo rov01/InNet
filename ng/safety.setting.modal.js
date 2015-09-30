@@ -4,24 +4,27 @@
 * Description
 */
 angular.module('InNet')
-.controller('SafetySettingCtrl', ['$scope', 'strikeTeam', '$modalInstance', 'StSvc', '$state', 'MemberSvc', 'CaseSvc', '$stateParams', 'SocketSvc',
-	function ($scope, strikeTeam, $modalInstance, StSvc, $state, MemberSvc, CaseSvc, $stateParams, SocketSvc) {
+.controller('SafetySettingCtrl', ['$scope', 'strikeTeam', '$modalInstance', 'StSvc', '$state', 'MemberSvc', 'CaseSvc', '$stateParams', 'SocketSvc', 'caseDetail',
+	function ($scope, strikeTeam, $modalInstance, StSvc, $state, MemberSvc, CaseSvc, $stateParams, SocketSvc, caseDetail ) {
 		
-		var members = [];
-		var memberObjs =[];
 		$scope.strikeTeam = strikeTeam;
+		caseDetail.env == '住宅火警'? $scope.apartment =  true  : $scope.apartment = false 
 
-		CaseSvc.fetchDetails($stateParams.id).success(function(details){
+		var newMembers = [];
+
+		CaseSvc.fetchDetails($stateParams.caseId).success(function(details){
 			$scope.dispatch = details.branchIds;
-		});
+			$scope.currentBranch = $scope.dispatch[0].name;
+			var memberList = _.pluck(details.branchIds,'members');
+			$scope.members = []
+			memberList.forEach(function(branchMembers){
+				$scope.members.push.apply($scope.members, branchMembers)
+			});
+			$scope.members = $scope.members.filter(function(member) { return !member.isChecked });
+		})
 
-		$scope.chooseBranch = function(id){
-			$scope.members = $scope.dispatch[id].members
-			for (var i = $scope.members.length - 1; i >= 0; i--) {
-				if( $scope.members[i].isChecked ){
-					$scope.members.splice(i,1);
-				};
-			};
+		$scope.chooseBranch = function(branch){
+			$scope.currentBranch = branch;
 		};
 
 		$scope.cancel = function(){
@@ -30,42 +33,27 @@ angular.module('InNet')
 
 		$scope.check = function(member){
 			member.isChecked = !member.isChecked;
-			members.push(member._id);
-			memberObjs.push(member);
+			newMembers.push(member)
 		};
 
 		$scope.uncheck = function(member, id){
 			member.isChecked = !member.isChecked;
-			members.splice(id,1);
-			memberObjs.splice(id,1);
-		}
+			newMembers.splice(_.pluck(newMembers, '_id').indexOf(member._id),1);
+		};
 
 		$scope.save = function(){
+			$scope.strikeTeam.members.push.apply($scope.strikeTeam.members, newMembers)
 
-			StSvc.updateSt({
-				id : strikeTeam._id,
+			SocketSvc.emit('updateStrikeTeam',{
+				id : strikeTeam._id, 
 				position : strikeTeam.position,
-				area : strikeTeam.area,
-				mission : strikeTeam.mission,
-				memberIds : members
-			}).success(function(){
-				for (var i = members.length - 1; i >= 0; i--) {
-		            MemberSvc.updateIsChecked({
-		                memberId  : memberObjs[i]._id,
-		                mission	  : memberObjs[i].mission, 
-		                isChecked : true,
-		            })
-		        };
+				area : strikeTeam.area, 
+				floor : strikeTeam.floor,
+				group : strikeTeam.group,
+				memberIds : _.pluck($scope.strikeTeam.members,'_id'), 
+				members : $scope.strikeTeam.members
 			})
 
-			$modalInstance.close({
-				id : strikeTeam._id,
-				position : strikeTeam.position,
-				area : strikeTeam.area,
-				members : memberObjs,
-				caseId  : strikeTeam.caseId 
-			});
-
-			
+			$modalInstance.close('dismiss');			
 		};
 }])

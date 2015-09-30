@@ -4,16 +4,27 @@
 * Description
 */
 angular.module('InNet')
-.controller('CaseCtrl', ['$scope','$stateParams','$modal','CaseSvc', '$log', 'SocketSvc', 'UserSvc',
-	function ($scope , $stateParams, $modal, CaseSvc, $log, SocketSvc, UserSvc) {
+.controller('CaseCtrl', ['$scope','$stateParams','$modal','CaseSvc', '$log', 'SocketSvc', 'UserSvc', '$location',
+	function ($scope , $stateParams, $modal, CaseSvc, $log, SocketSvc, UserSvc, $location) {
 
 	$scope.maxSize = 5;
-	$scope.bigTotalItems = 175;
-	$scope.bigCurrentPage = 1;
+	$scope.itemsPerPage = 10;
+	$scope.currentPage = 1;
+	
+	$scope.pageChanged = function(){
+		CaseSvc.fetch(UserSvc.userCorps(), $scope.currentPage , $scope.itemsPerPage ).success(function(data){
+			$scope.cases = data.cases;
+		});
+	};
 
-	CaseSvc.fetch(UserSvc.userCorps()).success(function(cases){
-		$scope.cases = cases;
-	});
+	$scope.queryCases = function(){
+		CaseSvc.fetch(UserSvc.userCorps(), $scope.currentPage, $scope.itemsPerPage).success(function(data){
+			$scope.cases = data.cases;
+			$scope.totalItems = data.totalCases;
+		});
+	}
+
+	$scope.queryCases()
 
 	SocketSvc.on('newCase',function(_case){
 		$scope.cases.unshift(_case);
@@ -24,49 +35,9 @@ angular.module('InNet')
 	});
 
 	$scope.choose = function(id){
-		CaseSvc.findById($scope.cases[id]._id).success(function(_case){
+		CaseSvc.fetchById($scope.cases[id]._id).success(function(_case){
 				$scope.caseDetails = _case;
 		});
 	};
 
-	$scope.addNewCase = function () {
-	  	var modalInstance = $modal.open({
-		    templateUrl: 'views/case/case.modal.html',
-		    controller: 'CaseModalCtrl',
-		    size: "lg",
-		    resolve : {
-		    	caseId : function(){
-			    		if ( _.isEmpty($scope.cases)) {
-			    			return 0
-			    		} else{
-			    			return $scope.cases[0].caseId;
-			    		};
-			    },
-		    	caseDetails : function(){
-		    		return {}
-		    	}
-		    }
-	    });
-	    modalInstance.result.then(function (msg) {
-	      // $scope.cases.unshift(newCase);
-	    }, function () {
-	      $log.info('Modal dismissed at: ' + new Date());
-	    });
-	 };
-
-	 $scope.editCase = function(id){
-	 	var modalInstance = $modal.open({
-		  	templateUrl: 'views/case/case.modal.html',
-		    controller: 'CaseModalCtrl',
-		    size: "lg",
-		    resolve : {
-		    	caseId : function(){
-		    		return id
-		    	},
-		    	caseDetails : function(){
-		    		return $scope.caseDetails
-		    	}
-		    }
-	    });
-	 };
 }])

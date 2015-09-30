@@ -7,7 +7,7 @@ angular.module('InNet')
 .controller('DashboardCtrl', ['$scope', '$location', 'SocketSvc', 'UserSvc', 'BranchSvc',
 	function ($scope, $location, SocketSvc, UserSvc, BranchSvc) {
 
-		BranchSvc.fetch(UserSvc.userCorps()).success(function(branches){
+		BranchSvc.fetchByCorps(UserSvc.userCorps()).success(function(branches){
 			$scope.branches = branches;
 		});
 
@@ -34,5 +34,7 @@ angular.module('InNet')
 		$scope.$on('$destroy', function (event) {
 	        SocketSvc.removeAllListeners();
 	    });
+
+	    
 
 }])

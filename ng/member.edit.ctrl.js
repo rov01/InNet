@@ -19,24 +19,17 @@ angular.module('InNet')
 		memberInit();
 
 		$scope.save = function(){
-			var memberIds = [];
-			var directors = [];
-			for (var i = 0; i < $scope.members.length; i++) {
-				memberIds.push($scope.members[i]._id);
-				directors.push($scope.members[i].name);
-				if ($scope.members[i].title == "分隊長" || $scope.members[i].title == "小隊長" || $scope.members[i].title == "中隊長" || $scope.members[i].title == "大隊長") {
-					director = $scope.members[i].name;
-				};
-			};
 
+			var directors = _.pluck( $scope.members.filter(function(member) { return member.level > 1.3  }) , 'name');
 			BranchSvc.update({
 				branch : $stateParams.branch,
-				members : memberIds,
+				members : _.pluck( $scope.members , '_id'),
 				directors : directors,
-				director : director
-			});
-
-			 $window.history.back();
+				director : directors[0],
+				safetyManager : directors[0]
+			}).success(function(){
+				$window.history.back();
+			});		
 		};
 
 		$scope.addNewMember = function(){

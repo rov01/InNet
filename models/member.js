@@ -15,12 +15,18 @@ var db = require('../config/database'),
 		branch 			: { type : String, required : true  },
 		isChecked		: { type : Boolean, default : false },
 		onDuty			: { type : Boolean, default : true  },
+		level 			: { type : Number, default : 1.3 },
 		mission			: { type : String },
 		missions		: [ { type : String } ],
 		radioCodePrefix : { type : String },
 		radioCode 		: { type : Number },
 		workingTime 	: { type : Number },
-		isUser 			: { type : Boolean, default : false }
+		isUser 			: { type : Boolean, default : false },
+		carId 			: { type: Schema.Types.ObjectId , ref: 'Car' },
+		count 			: { type : Number, required : true, default : 0 },
+		group 			: { type : String },
+		groups 			: [ { type : String }],
+		groupId 		: { type : Number }
 	})
 
 module.exports = db.model('Member',memberSchema)

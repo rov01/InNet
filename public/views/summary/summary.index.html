@@ -1,49 +1,59 @@
-<div class="row wrapper border-bottom white-bg">
-	<div class="row">
-		<div class="col-sm-9">        
-	    	<h2>搶救部署 災害類型 : 火災</h2>
-	    	<div class="table-responsive">
+<div class="wrapper wrapper-content">
+	<div class="ibox">
+		<div class="ibox-title">
+			<div class="row">
+				<div class="col-md-8">
+					<h2>搶救部署 災害類型 : 火災</h2>
+				</div>
+				<div class="col-md-4">
+					<div class="row">
+						<div class="col-md-5">
+							<h3 class="pull-right">分面人員</h3>
+						</div>
+						<div class="col-md-7">
+							<select class="form-control m-b" ng-model='position.defaultPos', ng-options='pos for pos in position.positions'></select>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="ibox-content">
+			<div class="table-responsive">
 	    		<table class="table table table-bordered">
 		    		<thead>
 		    			<tr ng-if="!apartment">
 		    				<th></th>
-		    				<th>第一區</th>
-		    				<th>第二區</th>
-		    				<th>第三區</th>
-		    				<th>第四區</th>
-		    				<th>第五區</th>
+		    				<th class="text-center">第一區</th>
+		    				<th class="text-center">第二區</th>
+		    				<th class="text-center">第三區</th>
+		    				<th class="text-center">第四區</th>
+		    				<th class="text-center">第五區</th>
 		    			</tr>
-		    			<tr ng-if="apartment">
+		    			<tr ng-if="apartment" >
 		    				<th></th>
-		    				<th ng-repeat=" floor in position.floors"> {{floor}} 樓</th>
+		    				<th ng-repeat=" floor in position.floors" class="text-center"> {{::floor}} 樓</th>
 		    			</tr>
 		    		</thead>
 		    		<tbody>
-		    			<tr ng-repeat="deploy in deploys" ng-if="!apartment">
-		    				<td>第 {{$index + 1 }} 面</td>
-		    				<td ng-repeat="area in deploy track by $index"><p ng-if="area.stTotal> 0">{{ area.stTotal}} 組 ({{area.totalMember}}人)</p></td>
+		    			<tr ng-repeat="deploy in deploys" ng-if="!apartment" class="text-center">
+		    				<td>第 {{::$index + 1 }} 面</td>
+		    				<td ng-repeat="area in deploy track by $index">
+		    					<p ng-repeat="st in area.sts">
+		    						{{::st.id}} ({{::st.number}})人
+		    					</p>
+		    				</td>
 		    			</tr>
-		    			<tr ng-repeat="deploy in deploys" ng-if="apartment">
-		    				<td>第 {{ $index + 1  }} 面</td>
-		    				<td ng-repeat="floor in deploy track by $index"><p ng-if="floor.stTotal> 0">{{ floor.stTotal}} 組 ({{floor.totalMember}}人)</p></td>
+		    			<tr ng-repeat="deploy in deploys" ng-if="apartment" class="text-center">
+		    				<td>第 {{::$index + 1  }} 面</td>
+		    				<td ng-repeat="floor in deploy track by $index">
+		    					<p ng-repeat=" st in floor.sts"> {{::st.id}} ({{::st.number}})人</p>
+		    				</td>
 		    			</tr>
 		    		</tbody>
 		    	</table>
 	    	</div>
-    	</div>
-	    <div class="col-sm-3">
-	    	<div class="panel">
-	    		<div class="panel-body">
-	    			<select class="form-control m-b" ng-model='position.defaultPos', ng-options='pos for pos in position.positions'></select>
-	    		</div>
-	    		<div class="list-group">
-		    		<div class="list-group-item"></div>
-		    	</div>
-	    	</div>
-	    </div>		
+		</div>
 	</div>
-</div>
-<div class="wrapper wrapper-content">
 	<div class="row">
 		<div ng-repeat="strikeTeam in strikeTeams |  filterBy: ['position']:position.defaultPos">
 			<div class="panel panel-default" >
@@ -54,7 +64,7 @@
 					<span class="label label-warning pull-right" ng-if="strikeTeam.timerRunning"> 計時管制中  </span>
 					<span class="label label-success pull-right" ng-if="!strikeTeam.timerRunning"> 尚未計時管控 </span>
 				</div>
-				<div class="list-group">
+				<div class="list-group" >
 					<div class="list-group-item">
 						<p class="list-group-item-text" ng-if="!strikeTeam.timer">剩餘時間 : {{strikeTeam.limitTime.minutes()}} 分鐘  {{strikeTeam.limitTime.seconds()}} 秒數</p>
 						<p class="list-group-item-text" ng-if="strikeTeam.timer">剩餘時間 : {{strikeTeam.timer.minutes()}} 分 {{strikeTeam.timer.seconds()}} 秒</p>
@@ -66,10 +76,10 @@
 						<div class="row">
 							<div class="col-sm-6">
 								<p class="list-group-item-text" ng-if="!apartment">負責區面 : {{::strikeTeam.position}}</p>
-								<p class="list-group-item-text" ng-if="apartment">負責樓層 : {{strikeTeam.floor}}</p>
+								<p class="list-group-item-text" ng-if="apartment">負責樓層 : {{::strikeTeam.floor}}</p>
 							</div>
 							<div class="col-sm-6">
-								<p class="list-group-item-text">任務 : {{::strikeTeam.mission}}</p>
+								<p class="list-group-item-text">任務 : {{::strikeTeam.group}}</p>
 							</div>
 						</div>
 					</div>

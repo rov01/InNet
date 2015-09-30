@@ -37,19 +37,47 @@ angular.module('InNet')
                 role : ["admin"]
             }
         })
-        .state('dutyDesk.dashboard', {
-            url: "/dashboard",
-            templateUrl: "views/dashboard.html",
+        .state('dutyDesk.corps', {
+            url: "/corps",
+            templateUrl: "views/dashboard/corps.dashboard.html",
             controller : "DashboardCtrl",
             data : {
                 requiredLogin : true,
                 role : ["admin"]
             }
         })
-        .state('dutyDesk.case', {
+        .state('dutyDesk.branch',{
+            url : "/branch",
+            templateUrl : "views/dashboard/branch.dashboard.html",
+            controller : "DashboardCtrl",
+            date : {
+                requiredLogin : true,
+                role : ["admin"]
+            }
+        })
+        .state('dutyDesk.case',{
+            abstract : true,
+            template : "<ui-view>"
+        })
+        .state('dutyDesk.case.index', {
             url: "/case",
             templateUrl: "views/case/case.index.html",
             controller : "CaseCtrl",
+        })
+        .state('dutyDesk.case.new',{
+            url : "/case/new",
+            templateUrl : "views/case/case.new.html",
+            controller : "CaseNewCtrl"
+        })
+        .state('dutyDesk.case.show',{
+            url : "/case/:id/show",
+            templateUrl : "views/case/case.show.html",
+            controller : "CaseShowCtrl"
+        })
+        .state('dutyDesk.case.edit',{
+            url : "/case/:id/edit",
+            templateUrl : "views/case/case.edit.html",
+            controller : "CaseEditCtrl"
         })
         .state('dutyDesk.safety',{
             url : "/case/:id",
@@ -119,20 +147,25 @@ angular.module('InNet')
             templateUrl : "views/safety/safety.index.html",
             controller : "SafetyIndexCtrl"
         })
+        .state('director.safety.cmdShow',{
+            url : "/cmd/:caseId/show",
+            templateUrl : "views/safety/safety.cmd.show.html",
+            controller : "SafetyCmdShowCtrl"
+        })
+        .state('director.safety.branchShow',{
+            url : "/:caseId/show",
+            templateUrl : "views/safety/safety.branch.show.html",
+            controller : "SafetyShowCtrl"
+        })
         .state('director.safety.management',{
-            url : "/index/:id",
+            url : "/:caseId/manage",
             templateUrl : "views/safety/safety.manage.html",
             controller : "SafetyManageCtrl"         
         })
         .state('director.safety.summary',{
-            url : "/summary/:id",
+            url : "/:caseId/summary",
             templateUrl : "views/summary/summary.index.html",
             controller : "SummaryCtrl"
-        })
-        .state('director.map',{
-            url : "/map",
-            templateUrl : "views/map/map.index.html",
-            controller : "MapIndexCtrl"
         })
         .state('director.dutylist',{
             abstract : true,

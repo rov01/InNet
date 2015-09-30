@@ -24,7 +24,7 @@ angular.module('InNet')
 		$scope.nftOption.nft = $scope.nftOption.nfts[0];
 	})
 
-	BranchSvc.fetch(UserSvc.userCorps()).success(function(branches){
+	BranchSvc.fetchByCorps(UserSvc.userCorps()).success(function(branches){
 	    $scope.branches = branches;
 	});
 
@@ -73,7 +73,7 @@ angular.module('InNet')
 	$scope.dispatchList = $scope.caseObj.dispatchList.join(" ");
 
 	$scope.getCars = function( branch ){
-		 CarSvc.findByBranch(branch.name).success(function(cars){
+		 CarSvc.fetchByBranch(branch.name).success(function(cars){
 		 	for (var i = cars.length - 1; i >= 0; i--) {
 		 		if ($scope.caseObj.carIds.indexOf(cars[i]._id) > -1 ) {
 		 			cars[i].isChecked = true; 

@@ -28,15 +28,31 @@ router
 	// })
 
 router.get('/',function(req,res){
-	Car.find({})
-	.sort({ id : 1 })
-	.exec(function(err, cars){
-		if (err) {
-			return err
-		} else {
-			res.json(cars);
-		};
-	});
+	if (req.query.corps) {
+		Car.find({
+			corps : req.query.corps
+		})
+		.sort({ id : 1 })
+		.exec(function(err, cars){
+			if (err) {
+				return err
+			} else {
+				res.json(cars);
+			};
+		});
+	} else if (req.query.branch) {
+		Car.find({
+			branch : req.query.branch
+		})
+		.sort({id : 1 })
+		.exec(function(err,cars){
+			if (err) {
+				return err
+			} else {
+				res.json(cars)
+			};
+		})
+	};
 });
 
 router.get('/onDuty',function(req,res){

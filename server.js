@@ -7,8 +7,8 @@
 
 var express = require('express'),
 	morgan  = require('morgan'),
-	port = process.env.PORT || 3000,
-	app = express();
+	port 	= process.env.PORT || 3000,
+	app 	= express();
 
 app.use(morgan('dev'));
 app.use(require('./controllers'))
