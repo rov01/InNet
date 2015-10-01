@@ -5,19 +5,53 @@ var router   	= require('express').Router(),
 	async		= require('async'),
 	socketios 	= require('../../socketios');
 
+router.post('/',function(req,res){
+	var branch = new Branch({
+		name  		: req.body.name,
+		corps 		: req.body.corps,
+		pos 		: {
+			address : req.body.pos.address,
+			lat 	: req.body.pos.lat,
+			lng 	: req.body.pos.lng
+		}
+	});
+
+	branch.save(function(err,branch){
+		if (err){
+			return err;
+		} else {
+			return res.json(branch);
+		};
+	});
+});
+
 router.get('/', function(req,res){
- 	Branch.find({ 
- 		corps : req.query.corps
- 	})
- 	.sort({ id : 1 })
- 	.exec(function(err,branches){
- 		if (err) { 
- 			return err;
- 		}else{
- 			res.json(branches)
- 		};
- 	});
+	if (req.query.corps) {
+		Branch.find({
+			corps : req.query.corps
+		})
+		.sort({ id : 1 })
+		.exec(function(err,branches){
+			if (err) {
+				return err
+			} else {
+				return res.status(200).json(branches);
+			}; 
+		});
+	} else { 
+		Branch.find({})
+	 	.sort({ id : 1 })
+	 	.exec(function(err,branches){
+	 		if (err) { 
+	 			return err;
+	 		} else {
+	 			return res.status(200).json(branches)
+	 		};
+	 	});
+	};
  });
+
+
 
 router.post('/onduty',function(req,res){
 	var branches = [];
@@ -52,108 +86,112 @@ router.post('/onduty',function(req,res){
 	});
 });
 
-router.get('/name',function(req,res){
-	Branch.findOne({
-		name : req.query.branch
-	})
-	.exec(function(err,details){
-		Member
-		.populate(details,
-			{path : "members", match : {onDuty : true }},
-			function(err, members){
-				if (err) {
-					return err;
-				} else {
-					res.json(members);
-				};
-		});
-	});
-});
+router.get('/:branchId',function(req,res){
 
-router.get('/name/total',function(req,res){
-	Branch.findOne({
-		name : req.query.branch
-	})
-	.populate('members')
-	.exec(function(err,details){
-		if (err) {
-			return err;
-		} else {
-			res.json(details);
-		};
-	});
-});
-
-router.get('/:id',function(req,res){
-	Branch.findOne({
-		_id : req.params.id
-	})
-	.populate('members')
-	.exec(function(err,details){
-		if (err) {
-			return err;
-		} else {
-			res.json(details);
-		};
-	});
-});
-
-router.put('/:branch',function(req,res){
-	Branch.findOneAndUpdate({
-		name : req.params.branch
-	},
-	{ 
-		$set : {
-			members 	: req.body.members,
-			director 	: req.body.director,
-			directors 	: req.body.directors,
-			safetyManager : req.body.safetyManager
-		}
-	},
-	function(err){
-		if (err) {
-			return err;
-		}else{
-			return res.send(200)
-		}
-	});
-});
-
-router.put('/',function(req,res){
-
-	Branch.findOneAndUpdate({
-		name : req.query.branch
-	},
-	{
-		$set : {
-			director 	: req.body.director,
-			dispatchNum : req.body.dispatchNum,
-			safetyManager : req.body.safetyManager
-		}
-	},
-	function(err){
-		if (err) {
-			return err;
-		} else {
-			req.body.members.forEach(function(member){
-				Member.findOneAndUpdate({
-					_id : member._id
-				},{
-					$set : {
-						onDuty 	: member.onDuty,
-						mission : member.mission,
-						group  	: member.group,
-						groupId : member.groupId,
-						isChecked : member.isChecked 
-					}
-				},function(err){
-					if (err) {return err}
-					return 
-				})
+	if (req.query.onDuty) {
+		Branch.findOne({
+			id : req.params.branchId
+		})
+		.exec(function(err,details){
+			Member.populate(details,
+				{path : "members", match : {onDuty : true }},
+				function(err, _branch){
+					if (err) {
+						return err;
+					} else {
+						return res.status(200).json(_branch);
+					};
 			});
-			return  socketios.broadcast('onDutyUpdate',{ isUpated : true});
-		};
-	});
+		});
+	} else {
+		Branch.findOne({
+			id : req.params.branchId
+		})
+		.populate('members')
+		.exec(function(err,details){
+			if (err) {
+				return err;
+			} else {
+				return res.json(details);
+			};
+		});
+	}
 });
+
+router.get('/:branchId/details',function(req,res){
+
+});
+
+// router.get('/branch/:id',function(req,res){
+// 	Branch.findOne({
+// 		_id : req.params.id
+// 	})
+// 	.populate('members')
+// 	.exec(function(err,details){
+// 		if (err) {
+// 			return err;
+// 		} else {
+// 			res.json(details);
+// 		};
+// 	});
+// });
+
+// router.put('/:branch',function(req,res){
+// 	Branch.findOneAndUpdate({
+// 		name : req.params.branch
+// 	},
+// 	{ 
+// 		$set : {
+// 			members 	: req.body.members,
+// 			director 	: req.body.director,
+// 			directors 	: req.body.directors,
+// 			safetyManager : req.body.safetyManager
+// 		}
+// 	},
+// 	function(err){
+// 		if (err) {
+// 			return err;
+// 		}else{
+// 			return res.send(200)
+// 		}
+// 	});
+// });
+
+// router.put('/',function(req,res){
+
+// 	Branch.findOneAndUpdate({
+// 		name : req.query.branch
+// 	},
+// 	{
+// 		$set : {
+// 			director 	: req.body.director,
+// 			dispatchNum : req.body.dispatchNum,
+// 			safetyManager : req.body.safetyManager
+// 		}
+// 	},
+// 	function(err){
+// 		if (err) {
+// 			return err;
+// 		} else {
+// 			req.body.members.forEach(function(member){
+// 				Member.findOneAndUpdate({
+// 					_id : member._id
+// 				},{
+// 					$set : {
+// 						onDuty 	: member.onDuty,
+// 						mission : member.mission,
+// 						group  	: member.group,
+// 						groupId : member.groupId,
+// 						isChecked : member.isChecked 
+// 					}
+// 				},function(err){
+// 					if (err) {return err}
+// 					return 
+// 				})
+// 			});
+// 			return  socketios.broadcast('onDutyUpdate',{ isUpated : true});
+// 		};
+// 	});
+// });
 
 module.exports = router

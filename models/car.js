@@ -1,8 +1,8 @@
 var db = require('../config/database'),
 Schema   = db.Schema,
 CarSchema = new Schema({
+	id 			: { type : Number, required : true, default : 0 },
 	type 		: { type : String, required : true  },
-	id 			: { type : String, required : true  },
 	corps 	 	: { type : String, required : true  },
 	branch 		: { type : String, required : true  },
 	corps 		: { type : String, required : true  }, 
@@ -13,4 +13,16 @@ CarSchema = new Schema({
 	onDuty		: { type : Boolean, default : true  },
 })
 
-module.exports = db.model('Car',CarSchema)
+var Car = db.model('Car',CarSchema)
+
+CarSchema.pre('save',function(next){
+	var self = this;
+	Car.find({})
+	.count()
+	.exec(function(err,total){
+		self.id = total + 1; 
+		next();
+	});
+});
+
+module.exports = Car
