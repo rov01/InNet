@@ -8,7 +8,7 @@ angular.module('InNet')
 		corps 		: UserSvc.userCorps()
 	};
 
-	CaseSvc.fetchRelativeCase(userCondition).success(function(cases){
+	CaseSvc.fetchRelativeCase(userCondition).success(function(cases){ 
 		$scope.cases = cases;
 		cases.forEach(function(_case){
 			_case.dispatchBranches = ''

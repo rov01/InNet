@@ -23,6 +23,7 @@ CarSchema.pre('save',function(next){
 		self.id = total + 1; 
 		next();
 	});
+
 });
 
 module.exports = Car

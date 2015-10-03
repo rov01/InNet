@@ -38,6 +38,17 @@ router.get('/', function(req,res){
 				return res.status(200).json(branches);
 			}; 
 		});
+	} else if (req.query.branch) {
+		Branch.findOne({
+			name : req.query.branch
+		})
+		.sort({ id : 1})
+		.populate('members')
+		.exec(function(err,branch){
+			
+			if (err) { return err };
+			return res.status(200).json(branch)
+		});
 	} else { 
 		Branch.find({})
 	 	.sort({ id : 1 })
@@ -64,7 +75,7 @@ router.post('/onduty',function(req,res){
 				})
 				.exec(function(err,branch){
 					Member.populate(branch,
-							{path : "members", match : {onDuty : true }},
+							{path : "members", match : { onDuty : true }},
 							function(err, _branch){
 								if (err) {
 									return err;
@@ -87,7 +98,6 @@ router.post('/onduty',function(req,res){
 });
 
 router.get('/:branchId',function(req,res){
-
 	if (req.query.onDuty) {
 		Branch.findOne({
 			id : req.params.branchId
@@ -118,80 +128,62 @@ router.get('/:branchId',function(req,res){
 	}
 });
 
-router.get('/:branchId/details',function(req,res){
-
+router.put('/:branch',function(req,res){
+	Branch.findOneAndUpdate({
+		name : req.params.branch
+	},
+	{ 
+		$set : {
+			members 	: req.body.members,
+			director 	: req.body.director,
+			directors 	: req.body.directors,
+			safetyManager : req.body.safetyManager
+		}
+	},
+	function(err){
+		if (err) {
+			return err;
+		}else{
+			return res.send(200)
+		}
+	});
 });
 
-// router.get('/branch/:id',function(req,res){
-// 	Branch.findOne({
-// 		_id : req.params.id
-// 	})
-// 	.populate('members')
-// 	.exec(function(err,details){
-// 		if (err) {
-// 			return err;
-// 		} else {
-// 			res.json(details);
-// 		};
-// 	});
-// });
+router.put('/',function(req,res){
 
-// router.put('/:branch',function(req,res){
-// 	Branch.findOneAndUpdate({
-// 		name : req.params.branch
-// 	},
-// 	{ 
-// 		$set : {
-// 			members 	: req.body.members,
-// 			director 	: req.body.director,
-// 			directors 	: req.body.directors,
-// 			safetyManager : req.body.safetyManager
-// 		}
-// 	},
-// 	function(err){
-// 		if (err) {
-// 			return err;
-// 		}else{
-// 			return res.send(200)
-// 		}
-// 	});
-// });
-
-// router.put('/',function(req,res){
-
-// 	Branch.findOneAndUpdate({
-// 		name : req.query.branch
-// 	},
-// 	{
-// 		$set : {
-// 			director 	: req.body.director,
-// 			dispatchNum : req.body.dispatchNum,
-// 			safetyManager : req.body.safetyManager
-// 		}
-// 	},
-// 	function(err){
-// 		if (err) {
-// 			return err;
-// 		} else {
-// 			req.body.members.forEach(function(member){
-// 				Member.findOneAndUpdate({
-// 					_id : member._id
-// 				},{
-// 					$set : {
-// 						onDuty 	: member.onDuty,
-// 						mission : member.mission,
-// 						group  	: member.group,
-// 						groupId : member.groupId,
-// 						isChecked : member.isChecked 
-// 					}
-// 				},function(err){
-// 					if (err) {return err}
-// 					return 
-// 				})
-// 			});
-// 			return  socketios.broadcast('onDutyUpdate',{ isUpated : true});
-// 		};
-// 	});
-// });
+	Branch.findOneAndUpdate({
+		name : req.query.branch
+	},
+	{
+		$set : {
+			director 	: req.body.director,
+			dispatchNum : req.body.dispatchNum,
+			safetyManager : req.body.safetyManager
+		}
+	},
+	function(err){
+		if (err) {
+			return err;
+		} else {
+			req.body.members.forEach(function(member){
+				Member.findOneAndUpdate({
+					_id : member._id
+				},{
+					$set : {
+						onDuty 	: member.onDuty,
+						mission : member.mission,
+						group  	: member.group,
+						groupId : member.groupId,
+						isChecked : member.isChecked 
+					}
+				},function(err){
+					if (err) {return err}
+					return 
+				})
+			});
+			return  socketios.broadcast('onDutyUpdate',{ isUpated : true});
+		};
+	});
+});
 
 module.exports = router

@@ -26,14 +26,14 @@ var db 				= require('../config/database'),
 
 var Branch = db.model('Branch',BranchSchema)
 
-BranchSchema.pre('save',function(next){
-	var self = this;
-	Branch.find({})
-	.count()
-	.exec(function(err,total){
-		self.id = total + 1; 
-		next();
-	});
-});
+// BranchSchema.pre('save',function(next){
+// 	var self = this;
+// 	Branch.find({})
+// 	.count()
+// 	.exec(function(err,total){
+// 		self.id = total + 1; 
+// 		next();
+// 	});
+// });
 
 module.exports = Branch

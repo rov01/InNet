@@ -9,7 +9,7 @@ angular.module('InNet')
 		
 		var branch = UserSvc.userBranch();
 		
-		BranchSvc.totalListFindByName(branch).success(function(branch){
+		BranchSvc.fetchByName(branch).success(function(branch){
 			$scope.members = branch.members.filter(function(member) {
 				member.limitTime = moment.duration(member.workingTime, 'seconds');
 				return member.onDuty == true 

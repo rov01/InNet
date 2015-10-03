@@ -180,7 +180,7 @@ angular.module('InNet')
         .state('director.dutylist.edit',{
             url : "/edit",
             templateUrl: "views/dutylist/director.dutylist.edit.html",
-            controller : "DutyListEditCtrl",
+            controller : "DirDutyListEditCtrl",
         })	
 }])
 

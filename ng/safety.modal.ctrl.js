@@ -11,9 +11,9 @@ angular.module('InNet')
 		caseDetail.env == '住宅火警'? $scope.apartment =  true  : $scope.apartment = false 
  
 		$scope.title = branch +  ( stId +  1 );
+		
 
 		BranchSvc.fetchByName(branch).success(function(details){
-
 			$scope.details = details;
 		}).then(function(){
 			if ( $scope.details) {

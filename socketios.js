@@ -138,7 +138,10 @@ exports.connect = function(server){
 				creator 		: strikeTeam.creator
 			});
 
+			// console.log(newSt)
+
 			newSt.save(function(err,st){
+				console.log(err)
 				if (err) {return err};
 				Member.populate(st,
 					{path : "members", match : { onDuty : true }},

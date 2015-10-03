@@ -35,8 +35,8 @@ angular.module('InNet')
 				})
 			} else {
 				StSvc.fetch($stateParams.caseId,BRANCH).success(function(sts){
-				$scope.strikeTeams = sts;
-					if ($scope.details.members.length < 8 && _.isEmpty($scope.strikeTeams)) { $scope.quickStart = true  }; 
+					$scope.strikeTeams = sts;
+					if ($scope.details.dispatchNum < 8 && _.isEmpty($scope.strikeTeams)) { $scope.quickStart = true  }; 
 				}); 
 			};
 		});
@@ -124,12 +124,17 @@ angular.module('InNet')
 			var members =  $scope.details.members.filter(function(member) {
 				if ( member.mission == '司機' || member.mission == '安全管制員' || member.mission == '救護人員') {
 					return false  
-				}else{
-					return true;
+				}else {
+					member.isChecked = true;
+					return member.onDuty;
 				}
 			});
 
 			var strikeTeam = {
+				id 		  : 1,
+				caseId 	  : caseDetail._id,
+				branch 	  : UserSvc.userBranch(),
+				director  : _.pluck(members.filter(function(member) { return member.mission == '帶隊官'}),'name')[0],
 				position  : StMissionFac.position().defaultPos,
 				positions : StMissionFac.position().poss,
 				group     : StMissionFac.groups().branch[1],
@@ -137,9 +142,11 @@ angular.module('InNet')
 				area 	  : StMissionFac.area().defaultArea,
 				areas 	  : StMissionFac.area().areas,
 				floor 	  : 1, 
-				floors    : [1,2,3,4,5]
+				floors    : [1,2,3,4,5],
+				memberIds : _.pluck(members,'_id'),
+				members   : members,
+				creator   : UserSvc.currentUser(),
 			};
-
 	      	SocketSvc.emit("createStrikeTeam", strikeTeam);
 		};
 

@@ -9,7 +9,7 @@ angular.module('InNet')
 
 		var branch = UserSvc.userBranch();
 		
-		BranchSvc.totalListFindByName(branch).success(function(branch){
+		BranchSvc.fetchByName(branch).success(function(branch){
 			$scope.branch = branch;
 			$scope.onDutyTotal = $scope.branch.members.filter(function(member) {
 				return member.onDuty == true 

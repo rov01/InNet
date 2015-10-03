@@ -27,7 +27,7 @@
             <li ng-class="{active: $state.includes('dutyDesk')}">
                 <a ><i class="fa fa-tachometer"></i> <span class="nav-label">出勤人員</span> <span class="fa arrow"></span></a>
                 <ul class="nav nav-second-level" ng-class="{in: $state.includes('dutyDesk')}">
-                    <li ui-sref-active="active" ng-repeat="branch in branches" ng-if="isValid(branch.name)"><a href="/#/dutyDesk/dutylist/{{branch.name}}">{{branch.name}}</a></li>
+                    <li ui-sref-active="active" ng-repeat="branch in branches" ng-if="isValid(branch.name)"><a href="/#/dutyDesk/dutylist/{{branch.id}}">{{branch.name}}</a></li>
                 </ul>
             </li>
              <li ng-class="{active: $state.includes('dutyDesk')}">
