@@ -9,7 +9,6 @@ var db = require('../config/database'),
 	Schema = db.Schema,
 	CaseSchema = new Schema({
 		caseId   		: { type 	: Number,   default : 0 },
-		address   		: { type 	: String,  	required : true },
 		officerReceiver : { type 	: String,	required : true },
 		type      		: { type 	: String, 	required : true, default : "火警" },
 		types 			: [ { type    : String} ],
@@ -29,7 +28,11 @@ var db = require('../config/database'),
 		lastUpdate		: { type 	: String },
 		updateCount     : { type 	: Number },
 		endAt 			: { type 	: String },
-		location 		: { type    : String }
+		location 		: {
+			lat 	: { type : Number },
+			lng 	: { type : Number },
+			address : { type : String, required : true, default : "測試" }
+		}
 	})
 
 module.exports = db.model('Case',CaseSchema)

@@ -18,7 +18,10 @@ angular.module('InNet')
 		}).then(function(){
 			if ( $scope.details) {
 				$scope.details.members = $scope.details.members.filter(function(member){
-					return member.isChecked != true;  
+					return member.onDuty;  
+				});
+				$scope.details.members = $scope.details.members.filter(function(member){
+					return member.isChecked;  
 				});
 				$scope.details.members.forEach(function(member){
 					member.limitTime = moment.duration(member.workingTime, 'seconds');

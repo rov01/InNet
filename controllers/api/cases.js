@@ -13,7 +13,6 @@ var router 		= require('express').Router(),
 	socketios 	= require('../../socketios');
 
 router.post('/',function(req,res){
-	console.log(req.body)
 	Case.find({})
 	.count()
 	.exec(function(err,total){
@@ -34,7 +33,11 @@ router.post('/',function(req,res){
 			createAt 		: req.body.createAt,
 			lastUpdate		: req.body.lastUpdate,
 			ntf 			: req.body.ntf, 
-			location 		: JSON.stringify(req.body.location),
+			location 		: {
+				lat 	: req.body.location.lat,
+				lng 	: req.body.location.lng,
+				address : req.body.location.address
+			},
 			battleRadiuss   : req.body.battleRadiuss
 		});
 

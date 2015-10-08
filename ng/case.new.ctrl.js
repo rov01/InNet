@@ -6,26 +6,26 @@ angular.module('InNet')
 
 	GeoSvc.fetchBaseLocation(UserSvc.userCorps()).success(function(locations){
 		$scope.locations = locations;
-	})
+	});
 
 	var battleRadiuss = []; 
 
 	$scope.locateAddress = function(){
 		if ($scope.currentCase.address) {
 			GeoSvc.getGeoEncodedInfo($scope.currentCase.address).then(function(res){
-		        $scope.nowPos.lat = res.H;
-		        $scope.nowPos.lng = res.L;
+		        $scope.nowPos.lat = res.J;
+		        $scope.nowPos.lng = res.M;
 	            $scope.markers.mainMarker = {
-	            	lat: res.H,
-	                lng: res.L,
+	            	lat: res.J,
+	                lng: res.M,
 	                focus: true,
 	                message: "案件標的",
 	            };
 
 	            if (res) {
 	            	$scope.locations.forEach(function(location){
-		            	var r = GeoSvc.getDistance( location, { lat : res.H , lng : res.L } );
-		            	var battleRadius =  { base : location.branch,  to : { lat : res.H, lng :  res.L }, from : { lat : location.lat, lng : location.lng }, d : r }; 
+		            	var r = GeoSvc.getDistance( location, { lat : res.J , lng : res.M } );
+		            	var battleRadius =  { base : location.branch,  to : { lat : res.J, lng :  res.M }, from : { lat : location.lat, lng : location.lng }, d : r }; 
 		            	battleRadiuss.push( JSON.stringify(battleRadius));
 		            });
 	            };
@@ -37,7 +37,6 @@ angular.module('InNet')
 	var notifications;
 
 	$scope.currentCase = {
-		address : null,
 		phone 	: null,
 	    type 	: '火警', 
 	    types 	: [ '火警', '救護', '災害', '檢舉','其他'],
@@ -46,15 +45,16 @@ angular.module('InNet')
 	    floor 	: 1, 
 	    carIds  : [],
 	    dispatchList : [],
-	    branches :  []
+	    branches :  [],
+	    location : GeoSvc.defaultLocation()
 	};
 
 	$scope.dispatchList = $scope.currentCase.dispatchList.join(' ');
 
     angular.extend($scope, {
         nowPos: {
-            lat: 24.988,
-            lng: 121.5752,
+            lat: GeoSvc.defaultLocation().lat,
+            lng: GeoSvc.defaultLocation().lng,
             zoom: 17
         },
        markers: {},
@@ -108,23 +108,26 @@ angular.module('InNet')
 		});
 
 		CaseSvc.create({
-			address   : $scope.currentCase.address || '測試',
 			officerReceiver : UserSvc.currentUser() ||  '劉曉曼',
-			type      : $scope.currentCase.type || '火警',
-			types 	  : $scope.currentCase.types,
-			phone     : $scope.currentCase.phone || '測試',
-			branches  : _.unique(_.pluck(dispatchCars, 'branch')),
-			branchIds : _.pluck(dispatch, '_id'),
-	  		cars      : _.pluck(dispatchCars,'_id'),
-			corps 	  : UserSvc.userCorps(),
-			env 	  : $scope.currentCase.env,
-			envs 	  : $scope.currentCase.envs,
-			floor 	  : $scope.currentCase.floor,
-			ntf       : currentNtf._id,
-			createAt  : moment().format('YYYY-MMM-DD, h:mm:ss a'),
-			lastUpdate : moment().format('YYYY-MMM-DD, h:mm:ss a'),
-			location  :  $scope.markers.mainMarker,
-			battleRadiuss : battleRadiuss
+			type      		: $scope.currentCase.type || '火警',
+			types 	  		: $scope.currentCase.types,
+			phone     		: $scope.currentCase.phone || '測試',
+			branches  		: _.unique(_.pluck(dispatchCars, 'branch')),
+			branchIds 		: _.pluck(dispatch, '_id'),
+	  		cars      		: _.pluck(dispatchCars,'_id'),
+			corps 	  		: UserSvc.userCorps(),
+			env 	  		: $scope.currentCase.env,
+			envs 	  		: $scope.currentCase.envs,
+			floor 	  		: $scope.currentCase.floor,
+			ntf       		: currentNtf._id,
+			createAt  		: moment().format('YYYY-MMM-DD, h:mm:ss a'),
+			lastUpdate 		: moment().format('YYYY-MMM-DD, h:mm:ss a'),
+			location  		:  {
+				lat 	: $scope.currentCase.location.lat,
+				lng 	: $scope.currentCase.location.lng,
+				address : $scope.currentCase.location.address || '測試'
+			},
+			battleRadiuss 	: battleRadiuss
 		}).success(function(){
 			$window.history.back();
 		});

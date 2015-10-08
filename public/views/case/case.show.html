@@ -61,11 +61,11 @@
 							</tr>
 						</thead>
 						<tbody>
-							<tr class="text-center" ng-repeat="onDutyBranch in onDutyBranches" style="font-size:15px;">
+							<tr class="text-center" ng-repeat="branch in caseDetail.branchIds" style="font-size:15px;">
 								<td><small>第 1 梯次</small></td>
-								<td><small>{{::onDutyBranch.name}}</small></td>
-								<td><small>{{::onDutyBranch.director}}</small></td>
-								<td><small>{{::onDutyBranch.safetyManager}}</small></td>
+								<td><small>{{::branch.name}}</small></td>
+								<td><small>{{::branch.director}}</small></td>
+								<td><small>{{::branch.safetyManager}}</small></td>
 							</tr>
 						</tbody>
 					</table>

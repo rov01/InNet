@@ -45,7 +45,6 @@ router.get('/', function(req,res){
 		.sort({ id : 1})
 		.populate('members')
 		.exec(function(err,branch){
-			
 			if (err) { return err };
 			return res.status(200).json(branch)
 		});
@@ -61,8 +60,6 @@ router.get('/', function(req,res){
 	 	});
 	};
  });
-
-
 
 router.post('/onduty',function(req,res){
 	var branches = [];

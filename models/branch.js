@@ -17,7 +17,7 @@ var db 				= require('../config/database'),
 		dispatchNum 	: { type : Number },
 		safetyManager 	: { type : String },
 		cases 			: [ { type : Schema.Types.ObjectId, ref : 'Case'} ],
-		pos				: {
+		location		: {
 			address : { type : String },
 			lat 	: { type : Number },
 			lng 	: { type : Number }

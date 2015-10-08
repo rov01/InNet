@@ -30,15 +30,15 @@ angular.module('InNet')
 
 		SocketSvc.on('dismiss', function(data){
 			StSvc.fetchByCase(caseId).success(function(strikeTeams){
-				$scope.strikeTeams = strikeTeams;
-				$scope.deploys = initTable($scope.strikeTeams);
+				$scope.strikeTeams 	 = strikeTeams;
+				$scope.deploys 		 = initTable($scope.strikeTeams);
 				$scope.deployDetails = initDeploy($scope.strikeTeams);
 			});
 		});
 
 
 		var caseId = $stateParams.id;
-		CaseSvc.fetchById(caseId).success(function(_case){
+		CaseSvc.fetchDetails(caseId).success(function(_case){
 			_case.env == '住宅火警' ? $scope.apartment = true : $scope.apartment = false;
 			$scope.caseDetail = _case;
 			$scope.position = {
@@ -47,12 +47,7 @@ angular.module('InNet')
 				floor 		: $scope.caseDetail.floor,
 				floors  	: $scope.caseDetail.floor < 5? _.range(1,6,1) : _.range($scope.caseDetail.floor-2,$scope.caseDetail.floor+3,1)
 			};
-		}).then(function(){
-			BranchSvc.fetchOnDutyBranches($scope.caseDetail.branches).success(function(branches){
-				$scope.onDutyBranches = branches; 
-			});
 		});
-
 
 		StSvc.fetchByCase(caseId).success(function(strikeTeams){
 			if (strikeTeams) {

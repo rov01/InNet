@@ -35,7 +35,7 @@ angular.module('InNet')
 
     this.fetchBaseLocation = function(corps){
     	return $http.get('/api/geolocations?corps=' + corps)
-    }
+    };
 
     this.getDistance = function( from_loc , to_loc ){
 
@@ -52,6 +52,10 @@ angular.module('InNet')
 		        Math.sin(dLon/2) * Math.sin(dLon/2); 
 		var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
 		return R * c;
-    }
+    };
+
+    this.defaultLocation = function(){
+    	return { lat : 25.0927297 , lng :  121.4608639, address : null};
+    };
 	
 }])
