@@ -57,7 +57,7 @@ router.get('/',function(req,res){
 		Car.find({
 			onDuty : req.query.onDuty
 		})
-		.sort({ code : 1 })
+		.sort({id : 1 })
 		.exec(function(err,cars){
 			if (err) {
 				return err;

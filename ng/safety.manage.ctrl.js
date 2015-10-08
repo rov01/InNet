@@ -153,4 +153,8 @@ angular.module('InNet')
 		$scope.$on('$destroy', function (event) {
 	        SocketSvc.removeAllListeners();
 	    })
+
+	    
+
+
 }]);
