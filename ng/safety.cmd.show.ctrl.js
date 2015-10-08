@@ -14,6 +14,7 @@ angular.module('InNet')
 
 		CaseSvc.fetchDetails($stateParams.caseId).success(function(_case){
 			$scope.caseDetail = _case;
+			$scope.onDutyBranches = _case.branchIds;
 			if (_case.location) {
 				var location = JSON.parse(_case.location);
 				$scope.markers.mainMarker = {
@@ -25,25 +26,24 @@ angular.module('InNet')
 				$scope.battleRadiuss = _case.battleRadiuss;
 			};
 		}).then(function(){
-			BranchSvc.fetchOnDutyBranches($scope.caseDetail.branches).success(function(branches){
-				$scope.onDutyBranches = branches; 
-				$scope.onDutyBranches.forEach(function(branch){
-					branch.members.forEach(function(member){
-						if (branch.director == member.name ) {
-							branch.directorRadioCode = member.radioCodePrefix +  member.radioCode;
-						};
-						if (branch.safetyManager == member.name) {
-							branch.safetyManagerRadioCode = member.radioCodePrefix + member.radioCode;
-						};
-					});
+			$scope.onDutyBranches.forEach(function(branch){
+				branch.members.forEach(function(member){
+					if (branch.director == member.name ) {
+						branch.directorRadioCode = member.radioCodePrefix +  String(member.radioCode);
+					};
+					if (branch.safetyManager == member.name) {
+						branch.safetyManagerRadioCode = member.radioCodePrefix + String(member.radioCode);
+					};
+				});
 
+				if ($scope.battleRadius) {
 					$scope.battleRadiuss.forEach(function(battleRadius){
 						var radius = JSON.parse(battleRadius)
 						if (branch.name == radius.base) {
 							branch.estimatedArrivingTime =  Math.round(( radius.d / 50 ) * 60);
 						};
-					})					
-				});
+					})		
+				};
 			});
 		});
 

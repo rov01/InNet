@@ -32,7 +32,7 @@ angular.module('InNet')
 			if ($scope.ACCESSLEVEL > 1 ) {
 				StSvc.fetchByCase($stateParams.caseId).success(function(sts){
 					$scope.strikeTeams = sts; 
-				})
+				});
 			} else {
 				StSvc.fetch($stateParams.caseId,BRANCH).success(function(sts){
 					$scope.strikeTeams = sts;
